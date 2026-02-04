@@ -1,0 +1,22 @@
+.app-shell {
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.app-shell-container {
+  display: flex;
+}
+
+.app-shell-content {
+  flex: 1;
+}
+
+.app-shell-main {
+  padding: 24px 16px;
+}
+
+@media (min-width: 768px) {
+  .app-shell-main {
+    padding: 24px 32px;
+  }
+}

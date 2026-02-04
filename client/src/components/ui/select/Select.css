@@ -1,0 +1,86 @@
+.select-container {
+  position: relative;
+}
+
+.select-button {
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e4e4e7;
+  background-color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+}
+
+.select-button:focus {
+  border-color: #18181b;
+  box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.1);
+}
+
+.select-button.disabled {
+  cursor: not-allowed;
+}
+
+.select-value {
+  color: #18181b;
+}
+
+.select-placeholder {
+  color: #a1a1aa;
+}
+
+.select-arrow {
+  height: 16px;
+  width: 16px;
+  color: #71717a;
+  transition: transform 0.2s;
+}
+
+.select-arrow.open {
+  transform: rotate(180deg);
+}
+
+.select-dropdown {
+  position: absolute;
+  z-index: 10;
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e4e4e7;
+  background-color: #fff;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.select-options {
+  padding: 4px 0;
+}
+
+.select-option {
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #3f3f46;
+  background: none;
+  border: none;
+}
+
+.select-option:hover {
+  background-color: #fafafa;
+}
+
+.select-option.selected {
+  background-color: #f4f4f5;
+  color: #18181b;
+  font-weight: 500;
+}

@@ -1,0 +1,33 @@
+export const initialEventFormValues = {
+  clientDetails: { clientName: '', email: '', phoneNumber: '', address: '', postCode: '' },
+  eventDetails: {
+    eventName: '',
+    eventType: '',
+    eventDate: null,
+    guestCount: '',
+    venue: '',
+    postCode: '',
+  },
+  services: {
+    stageDecoration: false,
+    catering: false,
+    transportation: false,
+    mehandiHaldi: false,
+    photographyVideography: false,
+    saveTheDate: false,
+    cardDesignPrinting: false,
+    outfitDesign: false,
+    honeymoonPackage: false,
+  },
+  addOns: {
+    dj: false,
+    liveBand: false,
+    fireworks: false,
+    photoBooth: false,
+    welcomeGirls: false,
+    valetParking: false,
+    eventInsurance: false,
+    securityServices: false,
+    socialMediaCoverage: false,
+  },
+};
