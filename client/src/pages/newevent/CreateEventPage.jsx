@@ -85,10 +85,12 @@ export default function CreateEventPage() {
                     type={
                       currentStepConfig.actions.primary.action === 'submit' ? 'submit' : 'button'
                     }
-                    onClick={() =>
-                      currentStepConfig.actions.primary.action !== 'submit' &&
-                      handleAction(currentStepConfig.actions.primary.action)
-                    }
+                    onClick={(e) => {
+                      if (currentStepConfig.actions.primary.action !== 'submit') {
+                        e.preventDefault();
+                        handleAction(currentStepConfig.actions.primary.action);
+                      }
+                    }}
                     className="btn-primary"
                   >
                     {currentStepConfig.actions.primary.label}
@@ -113,6 +115,17 @@ export default function CreateEventPage() {
                       />
                     ))}
                   </div>
+                ) : section.type === 'review' ? (
+                  <>
+                    {section.fields.map((field, fieldIndex) => (
+                      <FormFieldRenderer
+                        key={fieldIndex}
+                        field={field}
+                        formik={formik}
+                        section={section.section}
+                      />
+                    ))}
+                  </>
                 ) : (
                   <>
                     <div className="form-grid">

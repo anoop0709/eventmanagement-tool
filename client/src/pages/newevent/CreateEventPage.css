@@ -147,31 +147,40 @@
 .btn-secondary {
   border-radius: 12px;
   border: 1px solid #e4e4e7;
-  background-color: #fff;
-  padding: 8px 16px;
+  background-color: #000000;
+  color: #fefefe;
+  padding: 8px 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease-in-out;
 }
 
 .btn-secondary:hover {
-  background-color: #fafafa;
+  background-color: #d60909;
+  color: #fff;
 }
-
+.btn-secondary:active {
+  transform: scale(0.9);
+}
 .btn-primary {
   border-radius: 12px;
-  background-color: #18181b;
-  padding: 8px 16px;
+  background-color: #000000;
+  padding: 8px 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #fff;
+  color: #fcfcfc;
   cursor: pointer;
-  transition: background-color 0.2s;
-  border: none;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #e4e4e7;
 }
 
 .btn-primary:hover {
-  background-color: #27272a;
+  background-color: #d60909;
+
+  color: #fff;
+}
+.btn-primary:active {
+  transform: scale(0.9);
 }
 
 .services-grid {

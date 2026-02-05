@@ -1,5 +1,6 @@
 import DatePicker from 'react-datepicker';
 import { Select } from '@/components/ui/select/Select';
+import { Review } from '@/components/ui/review/Review';
 import 'react-datepicker/dist/react-datepicker.css';
 import './FormFieldRenderer.css';
 
@@ -83,12 +84,15 @@ export function FormFieldRenderer({ field, formik, section }) {
         );
       }
 
+      case 'review':
+        return <Review formValues={formik.values} />;
+
       default:
         return null;
     }
   };
 
-  if (field.type === 'checkbox') {
+  if (field.type === 'checkbox' || field.type === 'review') {
     return renderField();
   }
 

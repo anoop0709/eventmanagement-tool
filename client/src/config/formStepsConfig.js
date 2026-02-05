@@ -101,7 +101,7 @@ export const formStepsConfig = [
     actions: {
       secondary: [
         { label: 'Save draft', action: 'draft' },
-        { label: 'Back', action: 'back' },
+        { label: 'Back: Client Information', action: 'back' },
       ],
       primary: { label: 'Next: Services', action: 'next' },
     },
@@ -175,7 +175,7 @@ export const formStepsConfig = [
     actions: {
       secondary: [
         { label: 'Save draft', action: 'draft' },
-        { label: 'Back', action: 'back' },
+        { label: 'Back: Event Details', action: 'back' },
       ],
       primary: { label: 'Next: Add-ons', action: 'next' },
     },
@@ -249,9 +249,28 @@ export const formStepsConfig = [
     actions: {
       secondary: [
         { label: 'Save draft', action: 'draft' },
-        { label: 'Back', action: 'back' },
+        { label: 'Back: Services', action: 'back' },
       ],
-      primary: { label: 'Next: Add-ons', action: 'next' },
+      primary: { label: 'Next: Review', action: 'next' },
+    },
+  },
+  {
+    id: 5,
+    subtitle: 'Review & Submit',
+    sections: [
+      {
+        title: 'Review & Submit',
+        subtitle: 'Review your event details and submit your request',
+        type: 'review',
+        fields: [{ type: 'review' }],
+      },
+    ],
+    actions: {
+      secondary: [
+        { label: 'Save draft', action: 'draft' },
+        { label: 'Back: Add-Ons', action: 'back' },
+      ],
+      primary: { label: 'Submit', action: 'submit' },
     },
   },
 ];

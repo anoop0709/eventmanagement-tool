@@ -1,14 +1,115 @@
-.sidebar-nav {
-  display: none;
+/* Hamburger Button - Mobile Only */
+.hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0.3rem;
+  right: 0.3rem;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  color: #3f3f46;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
 }
 
-@media (min-width: 768px) {
+.hamburger-btn:hover {
+  background: #f9fafb;
+  border-color: #d60909;
+}
+
+.hamburger-btn:active {
+  transform: scale(0.95);
+}
+
+/* Close Button - Inside Sidebar */
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  background: #f9fafb;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  color: #3f3f46;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #d60909;
+  color: #fff;
+  border-color: #d60909;
+}
+
+/* Overlay */
+.sidebar-overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: left 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+.sidebar-nav.open {
+  left: 0;
+}
+
+@media (min-width: 600px) {
+  /* Hide mobile-only elements on tablet and desktop */
+  .hamburger-btn,
+  .close-btn,
+  .sidebar-overlay {
+    display: none;
+  }
+
   .sidebar-nav {
     display: flex;
+    position: sticky;
+    left: 0;
     flex-direction: column;
     width: 256px;
     border-right: 1px solid #e4e4e7;
     background-color: #fff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    top: 0;
+    height: 100vh;
+  }
+}
+
+/* Show user info and logout only on mobile (under 600px) */
+@media (min-width: 600px) {
+  .sidebar-user-info,
+  .sidebar-logout-btn {
+    display: none !important;
   }
 }
 
@@ -19,7 +120,7 @@
 
 .sidebar-title {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: bolder;
 }
 
 .sidebar-subtitle {
@@ -28,21 +129,99 @@
 }
 
 .sidebar-menu {
-  padding: 12px;
+  padding: 0px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  height: 100%;
+}
+
+/* User Info - Mobile Only */
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin: 0.2rem 0.2rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e4e4e7;
+}
+
+.sidebar-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d60909 0%, #a00707 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.sidebar-user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-user-email {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Logout Button - Mobile Only */
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem;
+  padding: 0.875rem;
+  background: #f9fafb;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  color: #d60909;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar-logout-btn:hover {
+  background: #d60909;
+  color: #fff;
+  border-color: #d60909;
 }
 
 .sidebar-link {
   display: block;
-  border-radius: 12px;
-  padding: 8px 12px;
+  padding: 18px 12px;
   font-size: 14px;
+  font-weight: bolder;
   color: #3f3f46;
   transition: background-color 0.2s;
 }
 
 .sidebar-link:hover {
-  background-color: #fafafa;
+  background-color: #717171;
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background-color: #d60909;
+  color: #fff;
 }
