@@ -4,6 +4,7 @@ import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { FormCard } from '@/components/ui/form-card/FormCard';
 import { FormFieldRenderer } from '@/components/ui/form-field-renderer/FormFieldRenderer';
+import { MultipleEvents } from '@/components/ui/multiple-events/MultipleEvents';
 import { initialEventFormValues } from '../../config/eventFormConfig';
 import { formStepsConfig } from '../../config/formStepsConfig';
 import './CreateEventPage.css';
@@ -15,6 +16,7 @@ export default function CreateEventPage() {
     initialValues: initialEventFormValues,
     onSubmit: (values) => {
       console.log('Form submitted:', values);
+      localStorage.setItem('eventFormData', JSON.stringify(values));
       // Handle form submission (e.g., API call)
     },
   });
@@ -31,6 +33,7 @@ export default function CreateEventPage() {
         break;
       case 'draft':
         console.log('Saving draft...', formik.values);
+        localStorage.setItem('eventFormData', JSON.stringify(formik.values));
         break;
       case 'submit':
         formik.handleSubmit();
@@ -99,52 +102,79 @@ export default function CreateEventPage() {
               </div>
             }
           >
-            {currentStepConfig?.sections.map((section, sectionIndex) => (
-              <div key={sectionIndex}>
-                {section.title && <h3 className="form-section-title">{section.title}</h3>}
-                {section.subtitle && <p className="form-section-subtitle">{section.subtitle}</p>}
+            {currentStepConfig?.sections.map((section, sectionIndex) => {
+              const renderSectionContent = () => {
+                switch (section.type) {
+                  case 'services':
+                    return (
+                      <div className="services-grid">
+                        {section.fields.map((field, fieldIndex) => (
+                          <FormFieldRenderer
+                            key={fieldIndex}
+                            field={field}
+                            formik={formik}
+                            section={section.section}
+                          />
+                        ))}
+                      </div>
+                    );
 
-                {section.type === 'services' ? (
-                  <div className="services-grid">
-                    {section.fields.map((field, fieldIndex) => (
-                      <FormFieldRenderer
-                        key={fieldIndex}
-                        field={field}
+                  case 'multiple-events':
+                    return (
+                      <MultipleEvents
+                        fields={section.fields}
+                        servicesFields={section.servicesFields}
+                        addOnsFields={section.addOnsFields}
                         formik={formik}
                         section={section.section}
                       />
-                    ))}
-                  </div>
-                ) : section.type === 'review' ? (
-                  <>
-                    {section.fields.map((field, fieldIndex) => (
-                      <FormFieldRenderer
-                        key={fieldIndex}
-                        field={field}
-                        formik={formik}
-                        section={section.section}
-                      />
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <div className="form-grid">
-                      {section.fields.map((field, fieldIndex) => (
-                        <FormFieldRenderer
-                          key={fieldIndex}
-                          field={field}
-                          formik={formik}
-                          section={section.section}
-                        />
-                      ))}
-                    </div>
-                    {sectionIndex < currentStepConfig.sections.length - 1 && (
-                      <div className="form-divider" />
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
+                    );
+
+                  case 'review':
+                    return (
+                      <>
+                        {section.fields.map((field, fieldIndex) => (
+                          <FormFieldRenderer
+                            key={fieldIndex}
+                            field={field}
+                            formik={formik}
+                            section={section.section}
+                          />
+                        ))}
+                      </>
+                    );
+
+                  default:
+                    return (
+                      <>
+                        <div className="form-grid">
+                          {section.fields.map((field, fieldIndex) => (
+                            <FormFieldRenderer
+                              key={fieldIndex}
+                              field={field}
+                              formik={formik}
+                              section={section.section}
+                            />
+                          ))}
+                        </div>
+                        {sectionIndex < currentStepConfig.sections.length - 1 && (
+                          <div className="form-divider" />
+                        )}
+                      </>
+                    );
+                }
+              };
+
+              return (
+                <div key={sectionIndex}>
+                  {section.title && <h3 className="form-section-title">{section.title}</h3>}
+                  {section.subtitle && (
+                    <p className="form-section-subtitle">{section.subtitle}</p>
+                  )}
+                  {renderSectionContent()}
+                </div>
+              );
+            })}
           </FormCard>
         </form>
       </AppShell>

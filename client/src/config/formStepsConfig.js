@@ -47,11 +47,12 @@ export const formStepsConfig = [
   },
   {
     id: 2,
-    subtitle: 'Start with basics, then add services like decorations and catering.',
+    subtitle: 'Add one or more events (e.g., Wedding, Reception, Mehandi)',
     sections: [
       {
         title: 'Event Details',
-        section: 'eventDetails',
+        section: 'events',
+        type: 'multiple-events',
         fields: [
           {
             name: 'eventName',
@@ -66,6 +67,7 @@ export const formStepsConfig = [
             placeholder: 'Select event type',
             options: [
               { value: 'wedding', label: 'Wedding' },
+              { value: 'reception', label: 'Reception' },
               { value: 'engagement', label: 'Engagement' },
               { value: 'birthday', label: 'Birthday' },
               { value: 'corporate', label: 'Corporate' },
@@ -96,149 +98,113 @@ export const formStepsConfig = [
           },
           { name: 'postCode', label: 'Post Code', type: 'text', placeholder: 'e.g., 400001' },
         ],
-      },
-    ],
-    actions: {
-      secondary: [
-        { label: 'Save draft', action: 'draft' },
-        { label: 'Back: Client Information', action: 'back' },
-      ],
-      primary: { label: 'Next: Services', action: 'next' },
-    },
-  },
-  {
-    id: 3,
-    subtitle: 'Select services for your event',
-    sections: [
-      {
-        title: 'Select Services',
-        subtitle: 'Choose the services you need for this event',
-        type: 'services',
-        fields: [
+        servicesFields: [
           {
-            name: 'services.stageDecoration',
+            name: 'stageDecoration',
             label: 'Stage Decoration',
             description: 'Backdrop, flowers & lighting',
             type: 'checkbox',
           },
           {
-            name: 'services.catering',
+            name: 'catering',
             label: 'Catering',
             description: 'Food & beverages',
             type: 'checkbox',
           },
           {
-            name: 'services.transportation',
+            name: 'transportation',
             label: 'Transportation',
             description: 'Guest & couple transport',
             type: 'checkbox',
           },
           {
-            name: 'services.mehandiHaldi',
+            name: 'mehandiHaldi',
             label: 'Mehandi or Haldi',
             description: 'Traditional ceremonies',
             type: 'checkbox',
           },
           {
-            name: 'services.photographyVideography',
+            name: 'photographyVideography',
             label: 'Photography & Videography',
             description: 'Professional coverage',
             type: 'checkbox',
           },
           {
-            name: 'services.saveTheDate',
+            name: 'saveTheDate',
             label: 'Save The Date',
             description: 'Announcement',
             type: 'checkbox',
           },
           {
-            name: 'services.cardDesignPrinting',
+            name: 'cardDesignPrinting',
             label: 'Card Design & Printing',
             description: 'Invitation cards',
             type: 'checkbox',
           },
           {
-            name: 'services.outfitDesign',
+            name: 'outfitDesign',
             label: 'Outfit Design',
             description: 'Custom outfits',
             type: 'checkbox',
           },
           {
-            name: 'services.honeymoonPackage',
+            name: 'honeymoonPackage',
             label: 'Honeymoon Destination Planning',
             description: 'Travel arrangements',
             type: 'checkbox',
           },
         ],
-      },
-    ],
-    actions: {
-      secondary: [
-        { label: 'Save draft', action: 'draft' },
-        { label: 'Back: Event Details', action: 'back' },
-      ],
-      primary: { label: 'Next: Add-ons', action: 'next' },
-    },
-  },
-  {
-    id: 4,
-    subtitle: 'Select add-Ons for your event',
-    sections: [
-      {
-        title: 'Select Add-Ons',
-        subtitle: 'Choose the services you need for this event',
-        type: 'services',
-        fields: [
+        addOnsFields: [
           {
-            name: 'addOns.dj',
+            name: 'dj',
             label: 'DJ',
             description: 'Music and entertainment',
             type: 'checkbox',
           },
           {
-            name: 'addOns.liveBand',
+            name: 'liveBand',
             label: 'Live Band',
             description: 'Music and entertainment',
             type: 'checkbox',
           },
           {
-            name: 'addOns.fireworks',
+            name: 'fireworks',
             label: 'Fireworks',
             description: 'Guest & couple entertainment',
             type: 'checkbox',
           },
           {
-            name: 'addOns.photoBooth',
+            name: 'photoBooth',
             label: 'Photo Booth',
             description: 'Fun photo sessions',
             type: 'checkbox',
           },
           {
-            name: 'addOns.welcomeGirls',
+            name: 'welcomeGirls',
             label: 'Welcome Girls',
             description: 'Traditional welcome service',
             type: 'checkbox',
           },
           {
-            name: 'addOns.valetParking',
+            name: 'valetParking',
             label: 'Valet Parking',
             description: 'Convenient parking service',
             type: 'checkbox',
           },
           {
-            name: 'addOns.eventInsurance',
+            name: 'eventInsurance',
             label: 'Event Insurance',
             description: 'Protect your event with insurance coverage',
             type: 'checkbox',
           },
           {
-            name: 'addOns.securityServices',
+            name: 'securityServices',
             label: 'Security Services',
             description: 'Ensure safety with professional security personnel',
             type: 'checkbox',
           },
           {
-            name: 'addOns.socialMediaCoverage',
+            name: 'socialMediaCoverage',
             label: 'Social Media Coverage',
             description: 'Live updates and posts on social media platforms',
             type: 'checkbox',
@@ -249,13 +215,13 @@ export const formStepsConfig = [
     actions: {
       secondary: [
         { label: 'Save draft', action: 'draft' },
-        { label: 'Back: Services', action: 'back' },
+        { label: 'Back: Client Information', action: 'back' },
       ],
       primary: { label: 'Next: Review', action: 'next' },
     },
   },
   {
-    id: 5,
+    id: 3,
     subtitle: 'Review & Submit',
     sections: [
       {
@@ -268,7 +234,7 @@ export const formStepsConfig = [
     actions: {
       secondary: [
         { label: 'Save draft', action: 'draft' },
-        { label: 'Back: Add-Ons', action: 'back' },
+        { label: 'Back: Event Details', action: 'back' },
       ],
       primary: { label: 'Submit', action: 'submit' },
     },

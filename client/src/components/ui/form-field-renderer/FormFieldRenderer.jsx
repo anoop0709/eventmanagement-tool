@@ -5,12 +5,27 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './FormFieldRenderer.css';
 
 export function FormFieldRenderer({ field, formik, section }) {
-  // Helper function to get nested value
+  // Helper function to get nested value (supports array notation)
   const getFieldValue = () => {
+    const fieldName = getFieldName();
+    
+    // Handle array notation like events[0].eventName
+    if (fieldName.includes('[')) {
+      const parts = fieldName.split(/[[\].]+/).filter(Boolean);
+      let value = formik.values;
+      for (const part of parts) {
+        if (value === undefined || value === null) return '';
+        value = value[part];
+      }
+      return value;
+    }
+    
+    // Handle simple dot notation
     if (field.name.includes('.')) {
       const [parent, child] = field.name.split('.');
       return formik.values[parent]?.[child];
     }
+    
     return section ? formik.values[section]?.[field.name] : formik.values[field.name];
   };
 
@@ -63,17 +78,16 @@ export function FormFieldRenderer({ field, formik, section }) {
         );
 
       case 'checkbox': {
-        // Extract parent object (services/addOns) and property name dynamically
-        const [parentKey, propertyKey] = field.name.split('.');
-        const checkedValue = formik.values[parentKey]?.[propertyKey] || false;
+        const fieldName = getFieldName();
+        const checkedValue = getFieldValue() || false;
 
         return (
           <label className="service-card">
             <input
               type="checkbox"
-              name={getFieldName()}
+              name={fieldName}
               checked={checkedValue}
-              onChange={formik.handleChange}
+              onChange={(e) => formik.setFieldValue(fieldName, e.target.checked)}
               className="service-checkbox"
             />
             <div>
