@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import LoginPage from './pages/login/LoginPage';
 import CreateEventPage from './pages/newevent/CreateEventPage';
+import UpdateDetailsPage from './pages/neweventdetails/UpdateDetailsPage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<DashboardPage />} />
         <Route path="/newevent" element={<CreateEventPage />} />
+        <Route path="/newevent/update-details" element={<UpdateDetailsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>

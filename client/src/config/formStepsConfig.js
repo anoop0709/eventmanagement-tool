@@ -162,8 +162,20 @@ export const formStepsConfig = [
             type: 'checkbox',
           },
           {
+            name: 'droneCoverage',
+            label: 'Drone Coverage',
+            description: 'Aerial photography and videography',
+            type: 'checkbox',
+          },
+          {
             name: 'liveBand',
             label: 'Live Band',
+            description: 'Music and entertainment',
+            type: 'checkbox',
+          },
+          {
+            name: 'lasetLightShow',
+            label: 'Laser Light Show',
             description: 'Music and entertainment',
             type: 'checkbox',
           },
@@ -183,6 +195,18 @@ export const formStepsConfig = [
             name: 'welcomeGirls',
             label: 'Welcome Girls',
             description: 'Traditional welcome service',
+            type: 'checkbox',
+          },
+          {
+            name: 'partyCake',
+            label: 'Party Cake',
+            description: 'Celebration cake service',
+            type: 'checkbox',
+          },
+          {
+            name: 'bouquetHaram',
+            label: 'Bouquet Haram',
+            description: 'Floral arrangements for the event',
             type: 'checkbox',
           },
           {
@@ -207,6 +231,12 @@ export const formStepsConfig = [
             name: 'socialMediaCoverage',
             label: 'Social Media Coverage',
             description: 'Live updates and posts on social media platforms',
+            type: 'checkbox',
+          },
+          {
+            name: 'alchoholLicence',
+            label: 'Alcohol Licence',
+            description: 'Permit for serving alcohol at the event',
             type: 'checkbox',
           },
         ],

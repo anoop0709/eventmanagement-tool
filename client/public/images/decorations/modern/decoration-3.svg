@@ -1,0 +1,15 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764BA2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#grad3)"/>
+  <polygon points="200,50 220,120 290,120 235,160 255,230 200,190 145,230 165,160 110,120 180,120" fill="#FFD700" opacity="0.9"/>
+  <circle cx="100" cy="80" r="15" fill="#FFD700" opacity="0.7"/>
+  <circle cx="300" cy="100" r="15" fill="#FFD700" opacity="0.7"/>
+  <circle cx="120" cy="220" r="12" fill="#FFD700" opacity="0.6"/>
+  <circle cx="280" cy="200" r="12" fill="#FFD700" opacity="0.6"/>
+  <text x="200" y="270" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">Golden Stars</text>
+</svg>

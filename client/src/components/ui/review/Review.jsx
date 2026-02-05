@@ -2,7 +2,7 @@ import './Review.css';
 
 export function Review({ formValues }) {
   console.log('Review formValues:', formValues);
-  
+
   // Helper to format field names to readable labels
   const formatLabel = (key) => {
     return key
@@ -36,16 +36,14 @@ export function Review({ formValues }) {
 
   const renderDetailsBadge = (data) => {
     if (!data) return null;
-    
-    const entries = Object.entries(data).filter(
-      ([key, value]) => {
-        // Skip services and addOns objects
-        if (key === 'services' || key === 'addOns') return false;
-        // Only show non-empty, non-null values
-        return value !== '' && value !== null && typeof value !== 'object';
-      }
-    );
-    
+
+    const entries = Object.entries(data).filter(([key, value]) => {
+      // Skip services and addOns objects
+      if (key === 'services' || key === 'addOns') return false;
+      // Only show non-empty, non-null values
+      return value !== '' && value !== null && typeof value !== 'object';
+    });
+
     if (entries.length === 0) return null;
 
     return (
@@ -62,18 +60,22 @@ export function Review({ formValues }) {
 
   const renderEventBadge = (event) => {
     if (!event) return null;
-    
+
     const { services, addOns, ...eventDetails } = event;
-    
+
     const detailsEntries = Object.entries(eventDetails).filter(
       ([, value]) => value !== '' && value !== null && typeof value !== 'object'
     );
-    
+
     const selectedServices = getSelectedCheckboxes(services);
     const selectedAddOns = getSelectedCheckboxes(addOns);
 
     // If there's no content at all, return null
-    if (detailsEntries.length === 0 && selectedServices.length === 0 && selectedAddOns.length === 0) {
+    if (
+      detailsEntries.length === 0 &&
+      selectedServices.length === 0 &&
+      selectedAddOns.length === 0
+    ) {
       return null;
     }
 
@@ -133,7 +135,7 @@ export function Review({ formValues }) {
           {renderDetailsBadge(formValues.clientDetails)}
         </div>
       )}
-      
+
       {/* Events Section */}
       {formValues.events && formValues.events.length > 0 && (
         <div className="review-section">
@@ -142,9 +144,10 @@ export function Review({ formValues }) {
             {formValues.events.map((event, index) => (
               <div key={index} className="review-event-group">
                 <h3 className="review-event-heading">
-                  Event {index + 1}{event.eventName ? ` - ${event.eventName}` : ''}
+                  Event {index + 1}
+                  {event.eventName ? ` - ${event.eventName}` : ''}
                 </h3>
-                
+
                 {/* Event Details with Services and Add-ons in one badge */}
                 {renderEventBadge(event)}
               </div>

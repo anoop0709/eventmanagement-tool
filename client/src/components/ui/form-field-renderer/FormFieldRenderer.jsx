@@ -8,7 +8,7 @@ export function FormFieldRenderer({ field, formik, section }) {
   // Helper function to get nested value (supports array notation)
   const getFieldValue = () => {
     const fieldName = getFieldName();
-    
+
     // Handle array notation like events[0].eventName
     if (fieldName.includes('[')) {
       const parts = fieldName.split(/[[\].]+/).filter(Boolean);
@@ -19,13 +19,13 @@ export function FormFieldRenderer({ field, formik, section }) {
       }
       return value;
     }
-    
+
     // Handle simple dot notation
     if (field.name.includes('.')) {
       const [parent, child] = field.name.split('.');
       return formik.values[parent]?.[child];
     }
-    
+
     return section ? formik.values[section]?.[field.name] : formik.values[field.name];
   };
 

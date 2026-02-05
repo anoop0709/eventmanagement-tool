@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -11,13 +12,15 @@ import './CreateEventPage.css';
 
 export default function CreateEventPage() {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: initialEventFormValues,
     onSubmit: (values) => {
       console.log('Form submitted:', values);
       localStorage.setItem('eventFormData', JSON.stringify(values));
-      // Handle form submission (e.g., API call)
+      // Navigate to update details page
+      navigate('/newevent/update-details');
     },
   });
 
@@ -168,9 +171,7 @@ export default function CreateEventPage() {
               return (
                 <div key={sectionIndex}>
                   {section.title && <h3 className="form-section-title">{section.title}</h3>}
-                  {section.subtitle && (
-                    <p className="form-section-subtitle">{section.subtitle}</p>
-                  )}
+                  {section.subtitle && <p className="form-section-subtitle">{section.subtitle}</p>}
                   {renderSectionContent()}
                 </div>
               );
