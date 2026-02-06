@@ -4,8 +4,9 @@ import { useFormik } from 'formik';
 import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { FormCard } from '@/components/ui/form-card/FormCard';
-import { Select } from '@/components/ui/select/Select';
-import { GalleryModal } from '@/components/ui/gallery-modal/GalleryModal';
+import { GalleryModal } from '@/components/ui/update-event-details/gallery-modal/GalleryModal';
+import { ServiceDetailSection } from '@/components/ui/update-event-details/service-detail-section/ServiceDetailSection';
+import { AddOnDetailSection } from '@/components/ui/update-event-details/addon-detail-section/AddOnDetailSection';
 import { serviceDetailFields, addOnDetailFields } from '@/config/updateDetailsConfig';
 import './UpdateDetailsPage.css';
 
@@ -36,8 +37,18 @@ export default function UpdateDetailsPage() {
     },
     onSubmit: (values) => {
       console.log('Update details submitted:', values);
-      // Merge with existing data and save
-      const updatedData = { ...eventFormData, ...values };
+
+      // Merge eventDetails back into the corresponding events
+      const updatedEvents = eventFormData.events?.map((event, index) => ({
+        ...event,
+        eventDetails: values.eventDetails?.[index] || {},
+      }));
+
+      const updatedData = {
+        ...eventFormData,
+        events: updatedEvents,
+      };
+
       localStorage.setItem('eventFormData', JSON.stringify(updatedData));
       // Navigate to next step or dashboard
       navigate('/');
@@ -118,7 +129,7 @@ export default function UpdateDetailsPage() {
       <AppShell>
         <h1 className="update-details-title">Update Event Details</h1>
         <p className="update-details-subtitle">
-          Add more details for each selected service and add-on
+          Add more details for each selected services and add-ons
         </p>
 
         <form onSubmit={formik.handleSubmit}>
@@ -136,6 +147,29 @@ export default function UpdateDetailsPage() {
                 title={`Event ${eventIndex + 1}${event.eventName ? ` - ${event.eventName}` : ''}`}
                 subtitle={`${event.eventType || 'Event'} details`}
               >
+                <div className="event-overview">
+                  <h3>{event.eventName}</h3>
+                  <p>
+                    <strong>Event Type:</strong> {event.eventType}
+                  </p>
+                  <p>
+                    <strong>Date & Time:</strong>
+                    {new Date(event.eventDate).toLocaleString('en-US', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
+                  </p>
+                  <p>
+                    <strong>Venue:</strong> {event.venue}
+                  </p>
+                  <p>
+                    <strong>Post Code:</strong> {event.postCode}
+                  </p>
+                </div>
                 {/* Services Section */}
                 {selectedServices.length > 0 && (
                   <div className="update-section">
@@ -143,141 +177,15 @@ export default function UpdateDetailsPage() {
                     <div className="update-services-grid">
                       {selectedServices.map((service) => {
                         const fields = serviceDetailFields[service.key] || [];
-
                         return (
-                          <div key={service.key} className="service-detail-card">
-                            <h4 className="service-detail-title">{service.label}</h4>
-                            <div className="service-detail-form">
-                              {fields.map((field, fieldIndex) => {
-                                const fieldName = `eventDetails[${eventIndex}].services.${service.key}.${field.name}`;
-                                const fieldValue =
-                                  formik.values.eventDetails?.[eventIndex]?.services?.[
-                                    service.key
-                                  ]?.[field.name] || '';
-
-                                const renderFieldInput = () => {
-                                  switch (field.type) {
-                                    case 'textarea':
-                                      return (
-                                        <textarea
-                                          name={fieldName}
-                                          placeholder={field.placeholder}
-                                          className="form-textarea"
-                                          rows={field.rows || 3}
-                                          onChange={formik.handleChange}
-                                          value={fieldValue}
-                                        />
-                                      );
-
-                                    case 'select':
-                                      return (
-                                        <Select
-                                          options={field.options || []}
-                                          value={fieldValue}
-                                          onChange={(value) =>
-                                            formik.setFieldValue(fieldName, value)
-                                          }
-                                          placeholder={field.placeholder}
-                                        />
-                                      );
-
-                                    case 'gallery-select':
-                                      return (
-                                        <>
-                                          <button
-                                            type="button"
-                                            className="gallery-select-btn"
-                                            onClick={() =>
-                                              openGalleryModal(
-                                                eventIndex,
-                                                service.key,
-                                                field.name,
-                                                formik.values?.eventDetails?.[eventIndex]?.services
-                                                  ?.stageDecoration?.theme || ''
-                                              )
-                                            }
-                                          >
-                                            <svg
-                                              width="20"
-                                              height="20"
-                                              viewBox="0 0 24 24"
-                                              fill="none"
-                                              stroke="currentColor"
-                                              strokeWidth="2"
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                            >
-                                              <line x1="12" y1="5" x2="12" y2="19"></line>
-                                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                            Select Decoration
-                                          </button>
-                                          {field.helperText && (
-                                            <span className="form-helper-text">
-                                              {field.helperText}
-                                            </span>
-                                          )}
-                                          {fieldValue?.length > 0 && (
-                                            <div className="selected-decorations">
-                                              {fieldValue.map((img, idx) => (
-                                                <div key={idx} className="selected-decoration-item">
-                                                  <img src={img.src} alt={img.name} />
-                                                  <span>{img.name}</span>
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </>
-                                      );
-
-                                    case 'file':
-                                      return (
-                                        <>
-                                          <input
-                                            type="file"
-                                            name={fieldName}
-                                            accept={field.accept}
-                                            multiple={field.multiple}
-                                            className="form-input"
-                                            onChange={(e) => {
-                                              const files = Array.from(e.target.files);
-                                              formik.setFieldValue(fieldName, files);
-                                            }}
-                                          />
-                                          {field.helperText && (
-                                            <span className="form-helper-text">
-                                              {field.helperText}
-                                            </span>
-                                          )}
-                                        </>
-                                      );
-
-                                    default:
-                                      return (
-                                        <input
-                                          type={field.type}
-                                          name={fieldName}
-                                          placeholder={field.placeholder}
-                                          className="form-input"
-                                          onChange={formik.handleChange}
-                                          value={fieldValue}
-                                        />
-                                      );
-                                  }
-                                };
-
-                                return (
-                                  <div key={fieldIndex} className="form-field">
-                                    <label className="form-label">
-                                      {field.label}
-                                      {field.required && <span className="required">*</span>}
-                                    </label>
-                                    {renderFieldInput()}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
+                          <ServiceDetailSection
+                            key={service.key}
+                            service={service}
+                            fields={fields}
+                            eventIndex={eventIndex}
+                            formik={formik}
+                            onGalleryOpen={openGalleryModal}
+                          />
                         );
                       })}
                     </div>
@@ -291,92 +199,15 @@ export default function UpdateDetailsPage() {
                     <div className="update-services-grid">
                       {selectedAddOns.map((addOn) => {
                         const fields = addOnDetailFields[addOn.key] || [];
-
                         return (
-                          <div key={addOn.key} className="service-detail-card">
-                            <h4 className="service-detail-title">{addOn.label}</h4>
-                            <div className="service-detail-form">
-                              {fields.map((field, fieldIndex) => {
-                                const fieldName = `eventDetails[${eventIndex}].addOns.${addOn.key}.${field.name}`;
-                                const fieldValue =
-                                  formik.values.eventDetails?.[eventIndex]?.addOns?.[addOn.key]?.[
-                                    field.name
-                                  ] || '';
-
-                                const renderFieldInput = () => {
-                                  switch (field.type) {
-                                    case 'textarea':
-                                      return (
-                                        <textarea
-                                          name={fieldName}
-                                          placeholder={field.placeholder}
-                                          className="form-textarea"
-                                          rows={field.rows || 3}
-                                          onChange={formik.handleChange}
-                                          value={fieldValue}
-                                        />
-                                      );
-
-                                    case 'select':
-                                      return (
-                                        <Select
-                                          options={field.options || []}
-                                          value={fieldValue}
-                                          onChange={(value) =>
-                                            formik.setFieldValue(fieldName, value)
-                                          }
-                                          placeholder={field.placeholder}
-                                        />
-                                      );
-
-                                    case 'file':
-                                      return (
-                                        <>
-                                          <input
-                                            type="file"
-                                            name={fieldName}
-                                            accept={field.accept}
-                                            multiple={field.multiple}
-                                            className="form-input"
-                                            onChange={(e) => {
-                                              const files = Array.from(e.target.files);
-                                              formik.setFieldValue(fieldName, files);
-                                            }}
-                                          />
-                                          {field.helperText && (
-                                            <span className="form-helper-text">
-                                              {field.helperText}
-                                            </span>
-                                          )}
-                                        </>
-                                      );
-
-                                    default:
-                                      return (
-                                        <input
-                                          type={field.type}
-                                          name={fieldName}
-                                          placeholder={field.placeholder}
-                                          className="form-input"
-                                          onChange={formik.handleChange}
-                                          value={fieldValue}
-                                        />
-                                      );
-                                  }
-                                };
-
-                                return (
-                                  <div key={fieldIndex} className="form-field">
-                                    <label className="form-label">
-                                      {field.label}
-                                      {field.required && <span className="required">*</span>}
-                                    </label>
-                                    {renderFieldInput()}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
+                          <AddOnDetailSection
+                            key={addOn.key}
+                            addOn={addOn}
+                            fields={fields}
+                            eventIndex={eventIndex}
+                            formik={formik}
+                            onGalleryOpen={openGalleryModal}
+                          />
                         );
                       })}
                     </div>

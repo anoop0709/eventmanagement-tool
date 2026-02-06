@@ -67,6 +67,7 @@ export const formStepsConfig = [
             placeholder: 'Select event type',
             options: [
               { value: 'wedding', label: 'Wedding' },
+              { value: 'destinationWedding', label: 'Destination Wedding' },
               { value: 'reception', label: 'Reception' },
               { value: 'engagement', label: 'Engagement' },
               { value: 'birthday', label: 'Birthday' },
@@ -97,6 +98,14 @@ export const formStepsConfig = [
             fullWidth: true,
           },
           { name: 'postCode', label: 'Post Code', type: 'text', placeholder: 'e.g., 400001' },
+          {
+            name: 'notesForEvent',
+            label: 'Additional notes for services and add-ons',
+            type: 'text',
+            placeholder:
+              'Enter any additional notes for services (e.g., specific themes, dietary preferences)',
+            fullWidth: true,
+          },
         ],
         servicesFields: [
           {
@@ -108,7 +117,7 @@ export const formStepsConfig = [
           {
             name: 'catering',
             label: 'Catering',
-            description: 'Food & beverages',
+            description: 'Food & beverages with serving staff',
             type: 'checkbox',
           },
           {
@@ -118,9 +127,39 @@ export const formStepsConfig = [
             type: 'checkbox',
           },
           {
+            name: 'accommodation',
+            label: 'Accommodation',
+            description: 'Guest & couple accommodation arrangements',
+            type: 'checkbox',
+          },
+          {
+            name: 'venueFloorPlanning',
+            label: 'Venue Floor Planning',
+            description: 'Layout and design of the event venue, including seating arrangements',
+            type: 'checkbox',
+          },
+          {
+            name: 'venueBooking',
+            label: 'Venue Booking',
+            description: 'Booking and reservation of the event venue',
+            type: 'checkbox',
+          },
+          {
             name: 'mehandiHaldi',
             label: 'Mehandi or Haldi',
             description: 'Traditional ceremonies',
+            type: 'checkbox',
+          },
+          {
+            name: 'bridalMakeup',
+            label: 'Bridal Makeup',
+            description: 'Professional makeup services for the bride',
+            type: 'checkbox',
+          },
+          {
+            name: 'groomsMakeup',
+            label: 'Grooms Makeup',
+            description: 'Professional makeup services for the grooms',
             type: 'checkbox',
           },
           {
@@ -153,6 +192,26 @@ export const formStepsConfig = [
             description: 'Travel arrangements',
             type: 'checkbox',
           },
+          {
+            name: 'pandalSetup',
+            label: 'Pandal Setup',
+            description:
+              'Event structures like shamianas, fibre sheet pandal, germen tent and decoration',
+            type: 'checkbox',
+          },
+          {
+            name: 'eventFurniture',
+            label: 'Event Furniture',
+            description: 'Furniture arrangements for the event like chairs, tables, sofas, etc.',
+            type: 'checkbox',
+          },
+          {
+            name: 'eventUtensils',
+            label: 'Event Utensils',
+            description:
+              'Utensil arrangements for the event like plates, glasses, cutlery,vessels etc.',
+            type: 'checkbox',
+          },
         ],
         addOnsFields: [
           {
@@ -174,7 +233,19 @@ export const formStepsConfig = [
             type: 'checkbox',
           },
           {
-            name: 'lasetLightShow',
+            name: 'liveStreaming',
+            label: 'Live Streaming',
+            description: 'Broadcast your event live to remote guests',
+            type: 'checkbox',
+          },
+          {
+            name: 'lcdScreens',
+            label: 'LCD Screens',
+            description: 'Display screens for event visuals and live feed',
+            type: 'checkbox',
+          },
+          {
+            name: 'laserLightShow',
             label: 'Laser Light Show',
             description: 'Music and entertainment',
             type: 'checkbox',
@@ -189,6 +260,18 @@ export const formStepsConfig = [
             name: 'photoBooth',
             label: 'Photo Booth',
             description: 'Fun photo sessions',
+            type: 'checkbox',
+          },
+          {
+            name: 'welcomeCanvasFrame',
+            label: 'Welcome Canvas Frame',
+            description: 'Personalized canvas frame for guest welcome',
+            type: 'checkbox',
+          },
+          {
+            name: 'welcomeArch',
+            label: 'Welcome Arch',
+            description: 'Personalized arch for guest welcome',
             type: 'checkbox',
           },
           {
