@@ -227,6 +227,13 @@ export const formStepsConfig = [
             type: 'checkbox',
           },
           {
+            name: 'activitiesForChildren',
+            label: 'Activities for Children',
+            description:
+              'Fun and engaging activities to keep children entertained during the event',
+            type: 'checkbox',
+          },
+          {
             name: 'droneCoverage',
             label: 'Drone Coverage',
             description: 'Aerial photography and videography',
@@ -323,7 +330,7 @@ export const formStepsConfig = [
             type: 'checkbox',
           },
           {
-            name: 'alchoholLicence',
+            name: 'alcoholLicence',
             label: 'Alcohol Licence',
             description: 'Permit for serving alcohol at the event',
             type: 'checkbox',

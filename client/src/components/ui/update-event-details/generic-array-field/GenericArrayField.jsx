@@ -194,7 +194,7 @@ export function GenericArrayField({ field, fieldName, fieldValue, formik }) {
         </div>
       ))}
 
-      <button type="button" className="cuisine-add-btn" onClick={handleAddItem}>
+      <button type="button" className="array-add-btn" onClick={handleAddItem}>
         <svg
           width="16"
           height="16"

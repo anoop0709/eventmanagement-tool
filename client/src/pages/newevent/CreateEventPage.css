@@ -110,6 +110,7 @@
 .form-label {
   font-size: 13px;
   color: #3f3f45;
+  font-weight: bold;
 }
 
 .form-input {

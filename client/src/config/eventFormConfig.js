@@ -31,6 +31,7 @@ export const initialEventFormValues = {
       },
       addOns: {
         dj: false,
+        activitiesForChildren: false,
         droneCoverage: false,
         liveBand: false,
         liveStreaming: false,
@@ -47,7 +48,7 @@ export const initialEventFormValues = {
         eventInsurance: false,
         securityServices: false,
         socialMediaCoverage: false,
-        alchoholLicence: false,
+        alcoholLicence: false,
       },
     },
   ],
