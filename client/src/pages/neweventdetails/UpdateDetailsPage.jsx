@@ -164,6 +164,9 @@ export default function UpdateDetailsPage() {
                     })}
                   </p>
                   <p>
+                    <strong>Number of Guests:</strong> {event.guestCount}
+                  </p>
+                  <p>
                     <strong>Venue:</strong> {event.venue}
                   </p>
                   <p>

@@ -2,7 +2,7 @@ import { Select } from '@/components/ui/select/Select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export function FieldRenderer({ field, fieldName, fieldValue, formik, onGalleryOpen }) {
+export function SectionFieldRenderer({ field, fieldName, fieldValue, formik, onGalleryOpen }) {
   const renderInput = () => {
     switch (field.type) {
       case 'textarea':

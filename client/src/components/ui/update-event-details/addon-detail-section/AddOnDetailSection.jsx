@@ -1,5 +1,5 @@
-import { FieldRenderer } from '@/components/ui/update-event-details/field-renderer/FieldRenderer';
-import { CuisineArrayField } from '@/components/ui/update-event-details/cuisine-array-field/CuisineArrayField';
+import { SectionFieldRenderer } from '@/components/ui/update-event-details/section-field-renderer/SectionFieldRenderer';
+import { GenericArrayField } from '@/components/ui/update-event-details/generic-array-field/GenericArrayField';
 
 export function AddOnDetailSection({ addOn, fields, eventIndex, formik, onGalleryOpen }) {
   const renderField = (field, fieldIndex) => {
@@ -7,14 +7,14 @@ export function AddOnDetailSection({ addOn, fields, eventIndex, formik, onGaller
     const fieldValue =
       formik.values.eventDetails?.[eventIndex]?.addOns?.[addOn.key]?.[field.name] || '';
 
-    if (field.type === 'cuisine-array') {
+    if (field.type === 'array') {
       return (
         <div key={fieldIndex} className="form-field">
           <label className="form-label">
             {field.label}
             {field.required && <span className="required">*</span>}
           </label>
-          <CuisineArrayField
+          <GenericArrayField
             field={field}
             fieldName={fieldName}
             fieldValue={fieldValue}
@@ -25,7 +25,7 @@ export function AddOnDetailSection({ addOn, fields, eventIndex, formik, onGaller
     }
 
     return (
-      <FieldRenderer
+      <SectionFieldRenderer
         key={fieldIndex}
         field={field}
         fieldName={fieldName}

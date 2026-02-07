@@ -1,40 +1,12 @@
 import { FormFieldRenderer } from '@/components/ui/form-field-renderer/FormFieldRenderer';
+import { initialEventFormValues } from '../../../config/eventFormConfig';
 import './MultipleEvents.css';
 
 export function MultipleEvents({ fields, servicesFields, addOnsFields, formik, section }) {
   const events = formik.values[section] || [];
 
   const addEvent = () => {
-    const newEvent = {
-      eventName: '',
-      eventType: '',
-      eventDate: null,
-      guestCount: '',
-      venue: '',
-      postCode: '',
-      services: {
-        stageDecoration: false,
-        catering: false,
-        transportation: false,
-        mehandiHaldi: false,
-        photographyVideography: false,
-        saveTheDate: false,
-        cardDesignPrinting: false,
-        outfitDesign: false,
-        honeymoonPackage: false,
-      },
-      addOns: {
-        dj: false,
-        liveBand: false,
-        fireworks: false,
-        photoBooth: false,
-        welcomeGirls: false,
-        valetParking: false,
-        eventInsurance: false,
-        securityServices: false,
-        socialMediaCoverage: false,
-      },
-    };
+    const newEvent = initialEventFormValues.events[0];
     formik.setFieldValue(section, [...events, newEvent]);
   };
 

@@ -10,6 +10,7 @@ export const initialEventFormValues = {
       postCode: '',
       notesForEvent: '',
       services: {
+        destinationWedding: false,
         stageDecoration: false,
         catering: false,
         transportation: false,

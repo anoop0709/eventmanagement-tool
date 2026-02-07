@@ -1,6 +1,5 @@
-import { FieldRenderer } from '@/components/ui/update-event-details/field-renderer/FieldRenderer';
-import { CuisineArrayField } from '@/components/ui/update-event-details/cuisine-array-field/CuisineArrayField';
-import { VehicleArrayField } from '@/components/ui/update-event-details/vehicle-array-field/VehicleArrayField';
+import { SectionFieldRenderer } from '@/components/ui/update-event-details/section-field-renderer/SectionFieldRenderer';
+import { GenericArrayField } from '@/components/ui/update-event-details/generic-array-field/GenericArrayField';
 
 export function ServiceDetailSection({ service, fields, eventIndex, formik, onGalleryOpen }) {
   const renderField = (field, fieldIndex) => {
@@ -8,31 +7,14 @@ export function ServiceDetailSection({ service, fields, eventIndex, formik, onGa
     const fieldValue =
       formik.values.eventDetails?.[eventIndex]?.services?.[service.key]?.[field.name] || '';
 
-    if (field.type === 'cuisine-array') {
+    if (field.type === 'array') {
       return (
         <div key={fieldIndex} className="form-field">
           <label className="form-label">
             {field.label}
             {field.required && <span className="required">*</span>}
           </label>
-          <CuisineArrayField
-            field={field}
-            fieldName={fieldName}
-            fieldValue={fieldValue}
-            formik={formik}
-          />
-        </div>
-      );
-    }
-
-    if (field.type === 'vehicle-array') {
-      return (
-        <div key={fieldIndex} className="form-field">
-          <label className="form-label">
-            {field.label}
-            {field.required && <span className="required">*</span>}
-          </label>
-          <VehicleArrayField
+          <GenericArrayField
             field={field}
             fieldName={fieldName}
             fieldValue={fieldValue}
@@ -43,7 +25,7 @@ export function ServiceDetailSection({ service, fields, eventIndex, formik, onGa
     }
 
     return (
-      <FieldRenderer
+      <SectionFieldRenderer
         key={fieldIndex}
         field={field}
         fieldName={fieldName}

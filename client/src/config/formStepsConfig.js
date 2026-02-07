@@ -101,13 +101,19 @@ export const formStepsConfig = [
           {
             name: 'notesForEvent',
             label: 'Additional notes for services and add-ons',
-            type: 'text',
+            type: 'textarea',
             placeholder:
               'Enter any additional notes for services (e.g., specific themes, dietary preferences)',
             fullWidth: true,
           },
         ],
         servicesFields: [
+          {
+            name: 'destinationWedding',
+            label: 'Destination Wedding',
+            description: 'Wedding held at a location away from the couple’s hometown',
+            type: 'checkbox',
+          },
           {
             name: 'stageDecoration',
             label: 'Stage Decoration',

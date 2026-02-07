@@ -243,6 +243,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 0.375rem;
 }
 
 .cuisine-item {
@@ -319,8 +320,9 @@
 
 .cuisine-add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(214, 9, 9, 0.3);
-  background: linear-gradient(135deg, #a00707 0%, #8a0606 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: white;
+  border-color: #9ca3af;
 }
 
 .cuisine-add-btn svg {

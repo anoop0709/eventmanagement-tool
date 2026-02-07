@@ -53,7 +53,17 @@ export function FormFieldRenderer({ field, formik, section }) {
             placeholder={field.placeholder}
           />
         );
-
+      case 'textarea':
+        return (
+          <textarea
+            name={getFieldName()}
+            placeholder={field.placeholder}
+            className="form-textarea"
+            rows={field.rows || 3}
+            onChange={formik.handleChange}
+            value={getFieldValue() || ''}
+          />
+        );
       case 'select':
         return (
           <Select
