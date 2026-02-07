@@ -81,16 +81,24 @@ export function SidebarNav() {
         )}
 
         <nav className="sidebar-menu">
-          {nav.map((item) => (
-            <NavLink
-              key={item.href}
-              to={item.href}
-              onClick={closeMenu}
-              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          {nav
+            .filter((item) => {
+              // Hide Dashboard link for non-admin users
+              if (item.href === '/' && !user?.isAdmin) {
+                return false;
+              }
+              return true;
+            })
+            .map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                onClick={closeMenu}
+                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              >
+                {item.label}
+              </NavLink>
+            ))}
         </nav>
 
         {/* Logout Button - Mobile Only */}

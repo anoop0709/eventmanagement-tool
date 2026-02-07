@@ -2,13 +2,13 @@ import { AppShell } from '@/components/layout/appshell/AppShell';
 import { StatCard } from '@/components/dashboard/status-card/StatCard';
 import { EventList } from '@/components/dashboard/event-list/EventList';
 import { mockEvents } from '@/data/mockEvents';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { AdminRoute } from '@/components/auth/AdminRoute';
 import { Button } from '@/components/ui/button/Button';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
   return (
-    <ProtectedRoute>
+    <AdminRoute>
       <AppShell>
         <div className="dashboard-header">
           <div>
@@ -55,6 +55,6 @@ export default function DashboardPage() {
           </section>
         </div>
       </AppShell>
-    </ProtectedRoute>
+    </AdminRoute>
   );
 }

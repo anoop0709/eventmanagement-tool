@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
         id: '1',
         email: email,
         name: email.split('@')[0],
+        isAdmin: email === 'admin@example.com', // Admin check based on email
       };
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
