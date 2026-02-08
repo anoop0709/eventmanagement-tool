@@ -1,12 +1,47 @@
+import { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/appshell/AppShell';
 import { StatCard } from '@/components/dashboard/status-card/StatCard';
 import { EventList } from '@/components/dashboard/event-list/EventList';
-import { mockEvents } from '@/data/mockEvents';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 import { Button } from '@/components/ui/button/Button';
+import { eventAPI } from '@/services/api';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState(null);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [statsData, eventsData] = await Promise.all([
+          eventAPI.getDashboardStats(),
+          eventAPI.getUpcomingEvents(),
+        ]);
+        setStats(statsData);
+        setUpcomingEvents(eventsData);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <AdminRoute>
+        <AppShell>
+          <div className="dashboard-header">
+            <h1 className="dashboard-title">Loading...</h1>
+          </div>
+        </AppShell>
+      </AdminRoute>
+    );
+  }
   return (
     <AdminRoute>
       <AppShell>
@@ -21,10 +56,26 @@ export default function DashboardPage() {
         </div>
 
         <div className="dashboard-stats">
-          <StatCard title="Upcoming events (7 days)" value={2} subtitle="Next: Birthday Party" />
-          <StatCard title="Pending quotes" value={1} subtitle="Needs customer approval" />
-          <StatCard title="Confirmed events" value={1} subtitle="This month" />
-          <StatCard title="Payments due" value="₹ 45,000" subtitle="2 milestones pending" />
+          <StatCard 
+            title="Total Events" 
+            value={stats?.totalEvents || 0} 
+            subtitle="All time" 
+          />
+          <StatCard 
+            title="Upcoming Events" 
+            value={stats?.upcomingEvents || 0} 
+            subtitle="Not cancelled" 
+          />
+          <StatCard 
+            title="Pending" 
+            value={stats?.pendingEvents || 0} 
+            subtitle="Awaiting approval" 
+          />
+          <StatCard 
+            title="Confirmed" 
+            value={stats?.confirmedEvents || 0} 
+            subtitle="Ready to go" 
+          />
         </div>
 
         <div className="dashboard-content">
@@ -35,7 +86,7 @@ export default function DashboardPage() {
                 View all
               </a>
             </div>
-            <EventList items={mockEvents} />
+            <EventList items={upcomingEvents} />
           </section>
 
           <section className="dashboard-quick-create">

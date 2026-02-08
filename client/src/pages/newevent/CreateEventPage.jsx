@@ -8,19 +8,49 @@ import { FormFieldRenderer } from '@/components/ui/form-field-renderer/FormField
 import { MultipleEvents } from '@/components/ui/multiple-events/MultipleEvents';
 import { initialEventFormValues } from '../../config/eventFormConfig';
 import { formStepsConfig } from '../../config/formStepsConfig';
+import { eventAPI } from '@/services/api';
 import './CreateEventPage.css';
 
 export default function CreateEventPage() {
   const [step, setStep] = useState(1);
+  const [eventId, setEventId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: initialEventFormValues,
-    onSubmit: (values) => {
-      console.log('Form submitted:', values);
-      localStorage.setItem('eventFormData', JSON.stringify(values));
-      // Navigate to update details page
-      navigate('/newevent/update-details');
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      try {
+        console.log('Form values:', values);
+
+        // Send exact structure to backend
+        const eventData = {
+          clientDetails: values.clientDetails || {},
+          events: values.events || [],
+          status: 'draft',
+        };
+
+        console.log('Sending to API:', eventData);
+
+        // On first form submit, create event as draft
+        const response = await eventAPI.createEvent(eventData);
+
+        console.log('API response:', response);
+
+        // Store event ID for updates
+        setEventId(response.event._id);
+        localStorage.setItem('currentEventId', response.event._id);
+        localStorage.setItem('eventFormData', JSON.stringify(values));
+
+        // Navigate to update details page
+        navigate('/newevent/update-details');
+      } catch (error) {
+        console.error('Error creating event:', error);
+        alert('Failed to create event: ' + error.message);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
 
@@ -35,14 +65,43 @@ export default function CreateEventPage() {
         setStep(step - 1);
         break;
       case 'draft':
-        console.log('Saving draft...', formik.values);
-        localStorage.setItem('eventFormData', JSON.stringify(formik.values));
+        handleSaveAsDraft();
         break;
       case 'submit':
         formik.handleSubmit();
         break;
       default:
         break;
+    }
+  };
+
+  const handleSaveAsDraft = async () => {
+    setIsSubmitting(true);
+    try {
+      // Send exact structure to backend
+      const eventData = {
+        clientDetails: formik.values.clientDetails || {},
+        events: formik.values.events || [],
+        status: 'draft',
+      };
+
+      if (eventId) {
+        // Update existing draft
+        await eventAPI.updateEvent(eventId, eventData);
+        alert('Draft saved successfully!');
+      } else {
+        // Create new draft
+        const response = await eventAPI.createEvent(eventData);
+        setEventId(response.event._id);
+        localStorage.setItem('currentEventId', response.event._id);
+        alert('Draft created successfully!');
+      }
+      localStorage.setItem('eventFormData', JSON.stringify(formik.values));
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('Failed to save draft: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,6 +141,7 @@ export default function CreateEventPage() {
                       type="button"
                       onClick={() => handleAction(action.action)}
                       className="btn-secondary"
+                      disabled={isSubmitting}
                     >
                       {action.label}
                     </button>
@@ -98,8 +158,9 @@ export default function CreateEventPage() {
                       }
                     }}
                     className="btn-primary"
+                    disabled={isSubmitting}
                   >
-                    {currentStepConfig.actions.primary.label}
+                    {isSubmitting ? 'Saving...' : currentStepConfig.actions.primary.label}
                   </button>
                 )}
               </div>

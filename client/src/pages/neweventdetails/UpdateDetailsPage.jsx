@@ -8,11 +8,14 @@ import { GalleryModal } from '@/components/ui/update-event-details/gallery-modal
 import { ServiceDetailSection } from '@/components/ui/update-event-details/service-detail-section/ServiceDetailSection';
 import { AddOnDetailSection } from '@/components/ui/update-event-details/addon-detail-section/AddOnDetailSection';
 import { serviceDetailFields, addOnDetailFields } from '@/config/updateDetailsConfig';
+import { eventAPI } from '@/services/api';
 import './UpdateDetailsPage.css';
 
 export default function UpdateDetailsPage() {
   const navigate = useNavigate();
   const [eventFormData, setEventFormData] = useState(null);
+  const [eventId, setEventId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [galleryModal, setGalleryModal] = useState({
     isOpen: false,
     eventIndex: null,
@@ -23,11 +26,17 @@ export default function UpdateDetailsPage() {
 
   useEffect(() => {
     const savedData = localStorage.getItem('eventFormData');
+    const savedEventId = localStorage.getItem('currentEventId');
+    
     if (savedData) {
       setEventFormData(JSON.parse(savedData));
     } else {
       // If no data, redirect back to create event
       navigate('/newevent');
+    }
+
+    if (savedEventId) {
+      setEventId(savedEventId);
     }
   }, [navigate]);
 
@@ -35,25 +44,78 @@ export default function UpdateDetailsPage() {
     initialValues: {
       eventDetails: {},
     },
-    onSubmit: (values) => {
-      console.log('Update details submitted:', values);
+    onSubmit: async (values) => {
+      if (!eventId) {
+        alert('Event ID not found. Please start from the beginning.');
+        navigate('/newevent');
+        return;
+      }
 
-      // Merge eventDetails back into the corresponding events
-      const updatedEvents = eventFormData.events?.map((event, index) => ({
-        ...event,
-        eventDetails: values.eventDetails?.[index] || {},
-      }));
+      setIsSubmitting(true);
+      try {
+        // Update event with service/addon details and change status to pending
+        const updateData = {
+          events: eventFormData.events?.map((event, index) => ({
+            ...event,
+            eventDetails: {
+              ...event.eventDetails,
+              ...values.eventDetails?.[index],
+            },
+          })) || [],
+          status: 'pending', // Submit = pending review
+        };
 
-      const updatedData = {
-        ...eventFormData,
-        events: updatedEvents,
-      };
+        await eventAPI.updateEvent(eventId, updateData);
 
-      localStorage.setItem('eventFormData', JSON.stringify(updatedData));
-      // Navigate to next step or dashboard
-      navigate('/');
+        alert('Event submitted successfully!');
+        localStorage.removeItem('eventFormData');
+        localStorage.removeItem('currentEventId');
+        navigate('/');
+      } catch (error) {
+        console.error('Error submitting event:', error);
+        alert('Failed to submit event: ' + error.message);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
+
+  const handleSaveAsDraft = async () => {
+    if (!eventId) {
+      alert('Event ID not found. Please start from the beginning.');
+      navigate('/newevent');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Update event with current details but keep as draft
+      const updateData = {
+        events: eventFormData.events?.map((event, index) => ({
+          ...event,
+          eventDetails: {
+            ...event.eventDetails,
+            ...formik.values.eventDetails?.[index],
+          },
+        })) || [],
+        status: 'draft',
+      };
+
+      await eventAPI.updateEvent(eventId, updateData);
+
+      localStorage.setItem('eventFormData', JSON.stringify({
+        ...eventFormData,
+        eventDetails: formik.values.eventDetails,
+      }));
+
+      alert('Draft saved successfully!');
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('Failed to save draft: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!eventFormData) {
     return null;
@@ -227,11 +289,20 @@ export default function UpdateDetailsPage() {
                   type="button"
                   onClick={() => navigate('/newevent')}
                   className="btn-secondary"
+                  disabled={isSubmitting}
                 >
                   Back to Event Details
                 </button>
-                <button type="submit" className="btn-primary">
-                  Save & Continue
+                <button
+                  type="button"
+                  onClick={handleSaveAsDraft}
+                  className="btn-secondary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Saving...' : 'Save as Draft'}
+                </button>
+                <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
             }
