@@ -9,6 +9,7 @@ import { MultipleEvents } from '@/components/ui/multiple-events/MultipleEvents';
 import { initialEventFormValues } from '../../config/eventFormConfig';
 import { formStepsConfig } from '../../config/formStepsConfig';
 import { eventAPI } from '@/services/api';
+import { useSnackbar } from '@/context/SnackbarContext';
 import './CreateEventPage.css';
 
 export default function CreateEventPage() {
@@ -19,6 +20,7 @@ export default function CreateEventPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { showSnackbar } = useSnackbar();
 
   const formik = useFormik({
     initialValues: initialEventFormValues,
@@ -41,7 +43,6 @@ export default function CreateEventPage() {
           response = await eventAPI.createEvent(eventData);
           setEventId(response.event._id);
         }
-
         // Store event ID for updates
         localStorage.setItem('currentEventId', response.event._id);
         localStorage.setItem('eventFormData', JSON.stringify(values));
@@ -49,8 +50,7 @@ export default function CreateEventPage() {
         // Navigate to update details page
         navigate('/newevent/update-details');
       } catch (error) {
-        console.error('Error saving event:', error);
-        alert('Failed to save event: ' + error.message);
+        showSnackbar('Something went wrong', 'error');
       } finally {
         setIsSubmitting(false);
       }
@@ -73,7 +73,7 @@ export default function CreateEventPage() {
     try {
       setLoading(true);
       const eventData = await eventAPI.getEventById(id);
-      
+
       // Pre-populate form with existing event data
       formik.setValues({
         clientDetails: eventData.clientDetails || initialEventFormValues.clientDetails,
@@ -81,7 +81,7 @@ export default function CreateEventPage() {
       });
     } catch (error) {
       console.error('Error loading event:', error);
-      alert('Failed to load event data: ' + error.message);
+      showSnackbar('Something went wrong', 'error');
       navigate('/events');
     } finally {
       setLoading(false);
@@ -122,18 +122,19 @@ export default function CreateEventPage() {
       if (eventId) {
         // Update existing draft
         await eventAPI.updateEvent(eventId, eventData);
-        alert('Draft saved successfully!');
+        showSnackbar('Event draft saved successfully', 'success');
       } else {
         // Create new draft
         const response = await eventAPI.createEvent(eventData);
         setEventId(response.event._id);
         localStorage.setItem('currentEventId', response.event._id);
-        alert('Draft created successfully!');
+        showSnackbar('Draft created successfully!', 'success');
       }
       localStorage.setItem('eventFormData', JSON.stringify(formik.values));
+      navigate('/events');
     } catch (error) {
       console.error('Error saving draft:', error);
-      alert('Failed to save draft: ' + error.message);
+      showSnackbar('Something went wrong', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -153,9 +154,7 @@ export default function CreateEventPage() {
   return (
     <ProtectedRoute>
       <AppShell>
-        <h1 className="create-event-title">
-          {isEditMode ? 'Edit Event' : 'Create Event'}
-        </h1>
+        <h1 className="create-event-title">{isEditMode ? 'Edit Event' : 'Create Event'}</h1>
         <p className="create-event-subtitle">{currentStepConfig?.subtitle}</p>
 
         {/* Stepper Indicator */}

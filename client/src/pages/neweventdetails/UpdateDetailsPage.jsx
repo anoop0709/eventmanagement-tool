@@ -9,10 +9,14 @@ import { ServiceDetailSection } from '@/components/ui/update-event-details/servi
 import { AddOnDetailSection } from '@/components/ui/update-event-details/addon-detail-section/AddOnDetailSection';
 import { serviceDetailFields, addOnDetailFields } from '@/config/updateDetailsConfig';
 import { eventAPI } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
+import { useSnackbar } from '@/context/SnackbarContext';
 import './UpdateDetailsPage.css';
 
 export default function UpdateDetailsPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { showSnackbar } = useSnackbar();
   const [eventFormData, setEventFormData] = useState(null);
   const [eventId, setEventId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,19 +29,49 @@ export default function UpdateDetailsPage() {
   });
 
   useEffect(() => {
-    const savedData = localStorage.getItem('eventFormData');
-    const savedEventId = localStorage.getItem('currentEventId');
-    
-    if (savedData) {
-      setEventFormData(JSON.parse(savedData));
-    } else {
-      // If no data, redirect back to create event
-      navigate('/newevent');
-    }
+    const loadEventData = async () => {
+      const savedData = localStorage.getItem('eventFormData');
+      const savedEventId = localStorage.getItem('currentEventId');
 
-    if (savedEventId) {
-      setEventId(savedEventId);
-    }
+      if (savedEventId) {
+        setEventId(savedEventId);
+
+        // Fetch existing event data to prepopulate
+        try {
+          const eventData = await eventAPI.getEventById(savedEventId);
+
+          // Build initial values from existing eventDetails
+          const initialEventDetails = {};
+          eventData.events?.forEach((event, index) => {
+            if (event.eventDetails) {
+              initialEventDetails[index] = event.eventDetails;
+            }
+          });
+
+          // Set formik values with existing data
+          if (Object.keys(initialEventDetails).length > 0) {
+            formik.setValues({ eventDetails: initialEventDetails });
+          }
+
+          setEventFormData(eventData);
+        } catch (error) {
+          console.error('Error loading event data:', error);
+          // Fallback to localStorage data
+          if (savedData) {
+            setEventFormData(JSON.parse(savedData));
+          } else {
+            navigate('/newevent');
+          }
+        }
+      } else if (savedData) {
+        setEventFormData(JSON.parse(savedData));
+      } else {
+        // If no data, redirect back to create event
+        navigate('/newevent');
+      }
+    };
+
+    loadEventData();
   }, [navigate]);
 
   const formik = useFormik({
@@ -55,25 +89,25 @@ export default function UpdateDetailsPage() {
       try {
         // Update event with service/addon details and change status to pending
         const updateData = {
-          events: eventFormData.events?.map((event, index) => ({
-            ...event,
-            eventDetails: {
-              ...event.eventDetails,
-              ...values.eventDetails?.[index],
-            },
-          })) || [],
-          status: 'pending', // Submit = pending review
+          events:
+            eventFormData.events?.map((event, index) => ({
+              ...event,
+              eventDetails: {
+                ...event.eventDetails,
+                ...values.eventDetails?.[index],
+              },
+            })) || [],
         };
 
         await eventAPI.updateEvent(eventId, updateData);
-
-        alert('Event submitted successfully!');
         localStorage.removeItem('eventFormData');
         localStorage.removeItem('currentEventId');
-        navigate('/');
+        showSnackbar('Event Draft saved successfully', 'success');
+        if (user.isAdmin) navigate('/');
+        else navigate('/events');
       } catch (error) {
-        console.error('Error submitting event:', error);
-        alert('Failed to submit event: ' + error.message);
+        console.error('Error submitting event details:', error);
+        showSnackbar('Something went wrong', 'error');
       } finally {
         setIsSubmitting(false);
       }
@@ -91,27 +125,33 @@ export default function UpdateDetailsPage() {
     try {
       // Update event with current details but keep as draft
       const updateData = {
-        events: eventFormData.events?.map((event, index) => ({
-          ...event,
-          eventDetails: {
-            ...event.eventDetails,
-            ...formik.values.eventDetails?.[index],
-          },
-        })) || [],
+        events:
+          eventFormData.events?.map((event, index) => ({
+            ...event,
+            eventDetails: {
+              ...event.eventDetails,
+              ...formik.values.eventDetails?.[index],
+            },
+          })) || [],
         status: 'draft',
       };
 
       await eventAPI.updateEvent(eventId, updateData);
 
-      localStorage.setItem('eventFormData', JSON.stringify({
-        ...eventFormData,
-        eventDetails: formik.values.eventDetails,
-      }));
+      localStorage.setItem(
+        'eventFormData',
+        JSON.stringify({
+          ...eventFormData,
+          eventDetails: formik.values.eventDetails,
+        })
+      );
 
-      alert('Draft saved successfully!');
+      showSnackbar('Event draft saved successfully', 'success');
+      if (user.isAdmin) navigate('/');
+      else navigate('/events');
     } catch (error) {
       console.error('Error saving draft:', error);
-      alert('Failed to save draft: ' + error.message);
+      showSnackbar('Something went wrong', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -176,7 +216,6 @@ export default function UpdateDetailsPage() {
       theme: null,
     });
   };
-
 
   const handleGallerySelect = (selectedImages) => {
     const { eventIndex, serviceKey, fieldName } = galleryModal;

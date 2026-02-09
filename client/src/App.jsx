@@ -1,5 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { SnackbarProvider } from './context/SnackbarContext';
+import { Snackbar } from './components/ui/snackbar/Snackbar';
+import { useSnackbar } from './context/SnackbarContext';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import LoginPage from './pages/login/LoginPage';
 import CreateEventPage from './pages/newevent/CreateEventPage';
@@ -7,9 +10,11 @@ import UpdateDetailsPage from './pages/neweventdetails/UpdateDetailsPage';
 import EventsPage from './pages/events/EventsPage';
 import EventViewPage from './pages/events/EventViewPage';
 
-function App() {
+function AppContent() {
+  const { snackbar, hideSnackbar } = useSnackbar();
+
   return (
-    <AuthProvider>
+    <>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<DashboardPage />} />
@@ -19,6 +24,22 @@ function App() {
         <Route path="/newevent/update-details" element={<UpdateDetailsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Snackbar
+        message={snackbar.message}
+        type={snackbar.type}
+        isOpen={snackbar.isOpen}
+        onClose={hideSnackbar}
+      />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <SnackbarProvider>
+        <AppContent />
+      </SnackbarProvider>
     </AuthProvider>
   );
 }

@@ -1,11 +1,29 @@
 import { SectionFieldRenderer } from '@/components/ui/update-event-details/section-field-renderer/SectionFieldRenderer';
 import { GenericArrayField } from '@/components/ui/update-event-details/generic-array-field/GenericArrayField';
+import { NestedFormField } from '@/components/ui/update-event-details/nested-form-field/NestedFormField';
 
 export function ServiceDetailSection({ service, fields, eventIndex, formik, onGalleryOpen }) {
   const renderField = (field, fieldIndex) => {
     const fieldName = `eventDetails[${eventIndex}].services.${service.key}.${field.name}`;
     const fieldValue =
       formik.values.eventDetails?.[eventIndex]?.services?.[service.key]?.[field.name] || '';
+
+    if (field.type === 'nested-form') {
+      return (
+        <div key={fieldIndex} className="form-field">
+          <label className="form-label">
+            {field.label}
+            {field.required && <span className="required">*</span>}
+          </label>
+          <NestedFormField
+            field={field}
+            fieldName={fieldName}
+            fieldValue={fieldValue}
+            formik={formik}
+          />
+        </div>
+      );
+    }
 
     if (field.type === 'array') {
       return (

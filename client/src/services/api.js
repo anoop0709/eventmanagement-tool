@@ -72,8 +72,12 @@ const apiRequest = async (endpoint, options = {}, retryCount = 0) => {
   });
 
   // If unauthorized and not already refreshing, try to refresh token
-  if (response.status === 401 && endpoint !== '/auth/refresh' && endpoint !== '/auth/login' && retryCount === 0) {
-    
+  if (
+    response.status === 401 &&
+    endpoint !== '/auth/refresh' &&
+    endpoint !== '/auth/login' &&
+    retryCount === 0
+  ) {
     // If already refreshing, wait for it to complete
     if (isRefreshing) {
       return new Promise((resolve) => {
@@ -87,17 +91,17 @@ const apiRequest = async (endpoint, options = {}, retryCount = 0) => {
 
     // Start refreshing
     isRefreshing = true;
-    
+
     try {
       // Attempt to refresh the token
       await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
       });
-      
+
       isRefreshing = false;
       onTokenRefreshed();
-      
+
       // Retry the original request
       return apiRequest(endpoint, options, 1);
     } catch (refreshError) {

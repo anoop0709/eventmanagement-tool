@@ -33,11 +33,11 @@ const EventViewPage = () => {
   }, [id]);
 
   const toggleService = (key) => {
-    setExpandedServices(prev => ({ ...prev, [key]: !prev[key] }));
+    setExpandedServices((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const toggleAddon = (key) => {
-    setExpandedAddons(prev => ({ ...prev, [key]: !prev[key] }));
+    setExpandedAddons((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   if (loading) {
@@ -65,7 +65,7 @@ const EventViewPage = () => {
       pending: { label: 'Pending', variant: 'warning' },
       approved: { label: 'Approved', variant: 'success' },
       rejected: { label: 'Rejected', variant: 'danger' },
-      completed: { label: 'Completed', variant: 'info' }
+      completed: { label: 'Completed', variant: 'info' },
     };
     return statusMap[status] || { label: status, variant: 'default' };
   };
@@ -76,7 +76,7 @@ const EventViewPage = () => {
     return date.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -87,7 +87,20 @@ const EventViewPage = () => {
       .trim();
   };
 
+  const formatStringValue = (str) => {
+    if (!str || typeof str !== 'string') return str;
 
+    // Convert snake_case and kebab-case to spaces
+    let formatted = str.replace(/[_-]/g, ' ');
+
+    // Convert camelCase to separate words
+    formatted = formatted.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+    // Capitalize first letter of each word
+    formatted = formatted.replace(/\b\w/g, (char) => char.toUpperCase());
+
+    return formatted;
+  };
 
   const renderValue = (value, key = '', parentKey = '') => {
     const lowerKey = key.toLowerCase();
@@ -99,11 +112,7 @@ const EventViewPage = () => {
 
     // Handle boolean
     if (typeof value === 'boolean') {
-      return (
-        <Badge variant={value ? 'success' : 'danger'}>
-          {value ? '✓ Yes' : '✗ No'}
-        </Badge>
-      );
+      return <Badge variant={value ? 'success' : 'danger'}>{value ? '✓ Yes' : '✗ No'}</Badge>;
     }
 
     // Handle number
@@ -117,17 +126,21 @@ const EventViewPage = () => {
       if (value.match(/^\d{4}-\d{2}-\d{2}T/)) {
         return <span className="value-date">{formatDate(value)}</span>;
       }
-      
+
       // Check if it's an image
-      if (lowerKey.includes('photo') || lowerKey.includes('image') || value.match(/\.(jpg|jpeg|png|gif|svg)$/i)) {
+      if (
+        lowerKey.includes('photo') ||
+        lowerKey.includes('image') ||
+        value.match(/\.(jpg|jpeg|png|gif|svg)$/i)
+      ) {
         return (
           <div className="image-preview">
             <img src={value} alt={key} />
           </div>
         );
       }
-      
-      return <span className="value-text">{value}</span>;
+
+      return <span className="value-text">{formatStringValue(value)}</span>;
     }
 
     // Handle arrays
@@ -137,8 +150,8 @@ const EventViewPage = () => {
       }
 
       // Check if it's an array of photo/image objects (has src property)
-      const hasImageObjects = value.every((item) => 
-        item && typeof item === 'object' && (item.src || item.url || item.image)
+      const hasImageObjects = value.every(
+        (item) => item && typeof item === 'object' && (item.src || item.url || item.image)
       );
 
       if (hasImageObjects || lowerKey.includes('photo') || lowerKey.includes('image')) {
@@ -146,7 +159,10 @@ const EventViewPage = () => {
           <div className="photos-gallery">
             {value.map((photo, index) => (
               <div key={index} className="photo-card">
-                <img src={photo.src || photo.url || photo.image || photo} alt={`Image ${index + 1}`} />
+                <img
+                  src={photo.src || photo.url || photo.image || photo}
+                  alt={`Image ${index + 1}`}
+                />
               </div>
             ))}
           </div>
@@ -155,28 +171,72 @@ const EventViewPage = () => {
 
       // Check if array contains objects
       const hasObjects = value.some((item) => typeof item === 'object' && item !== null);
-      
+
       if (hasObjects) {
         // Render as cards
         return (
           <div className="array-cards">
             {value.map((item, index) => (
               <div key={index} className="array-card">
-                <div className="array-card-content">
-                  {renderValue(item, key, parentKey)}
-                </div>
+                <div className="array-card-content">{renderValue(item, key, parentKey)}</div>
               </div>
             ))}
           </div>
         );
       } else {
         // Render primitive arrays as comma-separated list
-        return <span className="value-simple-list">{value.join(', ')}</span>;
+        return (
+          <span className="value-simple-list">
+            {value.map((v) => (typeof v === 'string' ? formatStringValue(v) : v)).join(', ')}
+          </span>
+        );
       }
     }
 
     // Handle objects
     if (typeof value === 'object') {
+      // Special handling for foodServingInVenue - show non-menu fields first, then menu items as direct cards
+      if (key === 'foodServingInVenue' || parentKey === 'foodServingInVenue') {
+        const entries = Object.entries(value);
+        const menuEntry = entries.find(([k]) => k === 'menu');
+        const otherEntries = entries.filter(([k]) => k !== 'menu');
+
+        return (
+          <div className="object-details">
+            {/* Render non-menu fields first */}
+            {otherEntries.map(([objKey, objValue]) => (
+              <div key={objKey} className="object-row">
+                <span className="object-key">{formatLabel(objKey)}</span>
+                <span className="object-val">{renderValue(objValue, objKey, key)}</span>
+              </div>
+            ))}
+
+            {/* Render menu items as direct cards without "Menu:" label */}
+            {menuEntry && Array.isArray(menuEntry[1]) && (
+              <div className="array-cards">
+                {menuEntry[1].map((menuItem, index) => (
+                  <div key={index} className="array-card">
+                    <div className="array-card-content">
+                      <div className="object-details">
+                        {Object.entries(menuItem).map(([menuKey, menuValue]) => (
+                          <div key={menuKey} className="object-row">
+                            <span className="object-key">{formatLabel(menuKey)}</span>
+                            <span className="object-val">
+                              {renderValue(menuValue, menuKey, 'menu')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // Default object rendering
       return (
         <div className="object-details">
           {Object.entries(value).map(([objKey, objValue]) => (
@@ -195,7 +255,7 @@ const EventViewPage = () => {
   const statusInfo = getStatusBadge(event.status);
   const clientDetails = event.clientDetails || {};
   const firstEvent = event.events?.[0] || {};
-  
+
   // Get services and add-ons from eventDetails
   const eventDetails = firstEvent.eventDetails || {};
   const services = eventDetails.services || {};
@@ -207,11 +267,7 @@ const EventViewPage = () => {
         {/* Header */}
         <div className="event-view-header">
           <div className="header-top">
-            <Button
-              variant="ghost"
-              onClick={() => navigate(-1)}
-              className="back-button"
-            >
+            <Button variant="ghost" onClick={() => navigate(-1)} className="back-button">
               ← Back
             </Button>
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
@@ -229,33 +285,23 @@ const EventViewPage = () => {
               <div className="card-content">
                 <div className="detail-row">
                   <span className="detail-label">Name</span>
-                  <span className="detail-value">
-                    {clientDetails.clientName || 'N/A'}
-                  </span>
+                  <span className="detail-value">{clientDetails.clientName || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Email</span>
-                  <span className="detail-value">
-                    {clientDetails.email || 'N/A'}
-                  </span>
+                  <span className="detail-value">{clientDetails.email || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Phone</span>
-                  <span className="detail-value">
-                    {clientDetails.phoneNumber || 'N/A'}
-                  </span>
+                  <span className="detail-value">{clientDetails.phoneNumber || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Address</span>
-                  <span className="detail-value">
-                    {clientDetails.address || 'N/A'}
-                  </span>
+                  <span className="detail-value">{clientDetails.address || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Post Code</span>
-                  <span className="detail-value">
-                    {clientDetails.postCode || 'N/A'}
-                  </span>
+                  <span className="detail-value">{clientDetails.postCode || 'N/A'}</span>
                 </div>
               </div>
             </div>
@@ -266,46 +312,32 @@ const EventViewPage = () => {
               <div className="card-content">
                 <div className="detail-row">
                   <span className="detail-label">Event Name</span>
-                  <span className="detail-value">
-                    {firstEvent.eventName || 'N/A'}
-                  </span>
+                  <span className="detail-value">{firstEvent.eventName || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Event Type</span>
-                  <span className="detail-value">
-                    {firstEvent.eventType || 'N/A'}
-                  </span>
+                  <span className="detail-value">{firstEvent.eventType || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Event Date</span>
-                  <span className="detail-value">
-                    {formatDate(firstEvent.eventDate)}
-                  </span>
+                  <span className="detail-value">{formatDate(firstEvent.eventDate)}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Guest Count</span>
-                  <span className="detail-value">
-                    {firstEvent.guestCount || 'N/A'}
-                  </span>
+                  <span className="detail-value">{firstEvent.guestCount || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Venue</span>
-                  <span className="detail-value">
-                    {firstEvent.venue || 'N/A'}
-                  </span>
+                  <span className="detail-value">{firstEvent.venue || 'N/A'}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Post Code</span>
-                  <span className="detail-value">
-                    {firstEvent.postCode || 'N/A'}
-                  </span>
+                  <span className="detail-value">{firstEvent.postCode || 'N/A'}</span>
                 </div>
                 {firstEvent.notesForEvent && (
                   <div className="detail-row">
                     <span className="detail-label">Notes</span>
-                    <span className="detail-value">
-                      {firstEvent.notesForEvent}
-                    </span>
+                    <span className="detail-value">{firstEvent.notesForEvent}</span>
                   </div>
                 )}
 

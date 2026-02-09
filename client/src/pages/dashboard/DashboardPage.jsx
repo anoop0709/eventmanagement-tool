@@ -56,26 +56,18 @@ export default function DashboardPage() {
         </div>
 
         <div className="dashboard-stats">
-          <StatCard 
-            title="Total Events" 
-            value={stats?.totalEvents || 0} 
-            subtitle="All time" 
+          <StatCard title="Total Events" value={stats?.totalEvents || 0} subtitle="All time" />
+          <StatCard
+            title="Upcoming Events"
+            value={stats?.upcomingEvents || 0}
+            subtitle="Not cancelled"
           />
-          <StatCard 
-            title="Upcoming Events" 
-            value={stats?.upcomingEvents || 0} 
-            subtitle="Not cancelled" 
+          <StatCard
+            title="Pending"
+            value={stats?.pendingEvents || 0}
+            subtitle="Awaiting approval"
           />
-          <StatCard 
-            title="Pending" 
-            value={stats?.pendingEvents || 0} 
-            subtitle="Awaiting approval" 
-          />
-          <StatCard 
-            title="Confirmed" 
-            value={stats?.confirmedEvents || 0} 
-            subtitle="Ready to go" 
-          />
+          <StatCard title="Confirmed" value={stats?.confirmedEvents || 0} subtitle="Ready to go" />
         </div>
 
         <div className="dashboard-content">

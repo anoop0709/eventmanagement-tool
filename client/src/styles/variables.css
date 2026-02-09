@@ -1,0 +1,145 @@
+/* Global CSS Variables */
+:root {
+  /* Primary Colors */
+  --primary-color: #1e4b6b;
+  --primary-hover: #025a8d;
+  --primary-active: #1e3a8a;
+
+  /* Background Colors */
+  --bg-white: #ffffff;
+  --bg-gray-50: #f9fafb;
+  --bg-gray-100: #f3f4f6;
+  --bg-gray-200: #e5e7eb;
+
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --text-white: #ffffff;
+
+  /* Border Colors */
+  --border-gray: #e5e7eb;
+  --border-gray-dark: #d1d5db;
+
+  /* Status Colors */
+  --status-draft-bg: #f3f4f6;
+  --status-draft-text: #4b5563;
+  --status-pending-bg: #fef3c7;
+  --status-pending-text: #92400e;
+  --status-confirmed-bg: #dbeafe;
+  --status-confirmed-text: #1e40af;
+  --status-completed-bg: #d1fae5;
+  --status-completed-text: #065f46;
+  --status-cancelled-bg: #fee2e2;
+  --status-cancelled-text: #991b1b;
+
+  /* Event Dot Colors */
+  --dot-draft: #6b7280;
+  --dot-pending: #f59e0b;
+  --dot-confirmed: #3b82f6;
+  --dot-completed: #10b981;
+  --dot-cancelled: #ef4444;
+
+  /* Accent Colors */
+  --accent-red: #ef4444;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* Global Button Styles */
+.btn {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn:active {
+  background-color: var(--primary-active);
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--primary-active);
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--bg-gray-100);
+  color: var(--text-primary);
+  border: 1px solid var(--border-gray);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-gray-200);
+  border-color: var(--border-gray-dark);
+}
+
+.btn-secondary:active {
+  background-color: var(--bg-gray-100);
+  transform: scale(0.98);
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}

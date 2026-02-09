@@ -117,8 +117,7 @@ export const serviceDetailFields = {
     {
       name: 'foodServingInVenue',
       label: 'Menu in the venue',
-      type: 'array',
-      itemLabel: 'Cuisine',
+      type: 'nested-form',
       nestedArrayKey: 'menu',
       nestedArrayLabel: 'Menu',
       fields: [

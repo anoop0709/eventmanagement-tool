@@ -3,16 +3,16 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-white);
   min-height: 100vh;
 }
 
 /* Header */
 .event-view-header {
-  background: #1e4b6b;
+  background: var(--primary-color);
   padding: 1.5rem 2rem;
   margin-bottom: 2rem;
-  border-bottom: 3px solid #ef4444;
+  border-bottom: 3px solid var(--accent-red);
 }
 
 .header-top {
@@ -25,25 +25,30 @@
 .back-button {
   font-size: 0.875rem;
   font-weight: 500;
-  color: white;
+  color: var(--text-white);
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
 }
 
 .back-button:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.5);
-color: white;
+  color: var(--text-white);
+}
+
+.back-button:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0.98);
 }
 
 .event-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-white);
   margin: 0;
 }
 
@@ -66,8 +71,8 @@ color: white;
 
 /* Card Styling */
 .event-view-card {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-white);
+  border: 1px solid var(--border-gray);
 }
 
 .event-view-card.full-width {
@@ -77,10 +82,10 @@ color: white;
 .card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-white);
   padding: 0.75rem 1.25rem;
   margin: 0;
-  background: #1e4b6b;
+  background: var(--primary-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -102,29 +107,33 @@ color: white;
 .section-accordion-header {
   width: 100%;
   padding: 0;
-  background: #1e4b6b;
+  background: var(--primary-color);
   border: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--transition-base);
   text-align: left;
 }
 
 .section-accordion-header:hover {
-  background: #1e4b6b;
+  background: var(--primary-color);
+}
+
+.section-accordion-header:active {
+  background: var(--primary-active);
 }
 
 .section-accordion-header .accordion-icon {
   margin-right: 1.25rem;
-  color: white;
+  color: var(--text-white);
 }
 
 .section-subtitle {
   font-size: 0.875rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-white);
   padding: 0.75rem 1.25rem;
   margin: 0;
   flex: 1;
@@ -266,6 +275,7 @@ color: white;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f3f4f6;
   align-items: center;
+  gap: 5rem;
 }
 
 .object-row:last-child {
@@ -276,7 +286,7 @@ color: white;
   font-weight: 600;
   color: #374151;
   font-size: 0.8125rem;
-  min-width: 180px;
+  min-width: 280px;
   flex-shrink: 0;
 }
 
@@ -526,4 +536,3 @@ color: white;
     grid-template-columns: repeat(2, 1fr);
   }
 }
-

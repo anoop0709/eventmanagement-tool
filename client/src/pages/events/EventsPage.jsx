@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { eventAPI } from '@/services/api';
+import { CalendarView } from '@/components/calendar/CalendarView';
 import './EventsPage.css';
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, draft, pending, confirmed, completed, cancelled
+  const [viewMode, setViewMode] = useState('list'); // list or calendar
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function EventsPage() {
       setLoading(true);
       const response = await eventAPI.getAllEvents();
       // Backend returns events array directly, not wrapped in {events: [...]}
-      const eventsArray = Array.isArray(response) ? response : (response.events || []);
+      const eventsArray = Array.isArray(response) ? response : response.events || [];
 
       setEvents(eventsArray);
     } catch (error) {
@@ -58,9 +60,20 @@ export default function EventsPage() {
         <div className="events-page">
           <div className="events-header">
             <h1>All Events</h1>
-            <button className="btn-primary" onClick={() => navigate('/newevent')}>
-              Create New Event
-            </button>
+            <div className="header-actions">
+              <button
+                className="view-toggle-btn"
+                onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
+              >
+                <span className="toggle-icon">{viewMode === 'list' ? '📅' : '📋'}</span>
+                <span className="toggle-text">
+                  {viewMode === 'list' ? 'Calendar View' : 'List View'}
+                </span>
+              </button>
+              <button className="btn-primary" onClick={() => navigate('/newevent')}>
+                Create New Event
+              </button>
+            </div>
           </div>
 
           {/* Filter Tabs */}
@@ -97,7 +110,7 @@ export default function EventsPage() {
             </button>
           </div>
 
-          {/* Events List */}
+          {/* Events List or Calendar */}
           {loading ? (
             <div className="events-loading">Loading events...</div>
           ) : filteredEvents.length === 0 ? (
@@ -107,6 +120,8 @@ export default function EventsPage() {
                 Create Your First Event
               </button>
             </div>
+          ) : viewMode === 'calendar' ? (
+            <CalendarView events={filteredEvents} />
           ) : (
             <div className="events-grid">
               {filteredEvents.map((event) => {
@@ -126,16 +141,12 @@ export default function EventsPage() {
                     <div className="event-card-body">
                       <div className="event-info">
                         <span className="info-label">Client:</span>
-                        <span className="info-value">
-                          {clientDetails.clientName || 'N/A'}
-                        </span>
+                        <span className="info-value">{clientDetails.clientName || 'N/A'}</span>
                       </div>
 
                       <div className="event-info">
                         <span className="info-label">Event Type:</span>
-                        <span className="info-value">
-                          {firstEvent.eventType || 'N/A'}
-                        </span>
+                        <span className="info-value">{firstEvent.eventType || 'N/A'}</span>
                       </div>
 
                       <div className="event-info">
@@ -154,9 +165,7 @@ export default function EventsPage() {
 
                       <div className="event-info">
                         <span className="info-label">Guests:</span>
-                        <span className="info-value">
-                          {firstEvent.guestCount || 'N/A'}
-                        </span>
+                        <span className="info-value">{firstEvent.guestCount || 'N/A'}</span>
                       </div>
 
                       {event.totalBudget && (
@@ -168,10 +177,7 @@ export default function EventsPage() {
                     </div>
 
                     <div className="event-card-footer">
-                      <button
-                        className="btn-edit"
-                        onClick={() => handleEditEvent(event._id)}
-                      >
+                      <button className="btn-edit" onClick={() => handleEditEvent(event._id)}>
                         Edit Event
                       </button>
                       <button
