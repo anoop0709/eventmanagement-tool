@@ -9,6 +9,15 @@
   color: #71717a;
 }
 
+.create-event-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 16px;
+  color: #71717a;
+}
+
 .create-event-stepper {
   margin-top: 24px;
   display: flex;

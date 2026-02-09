@@ -18,6 +18,21 @@ const fetchCSRFToken = async () => {
   }
 };
 
+// Flag to prevent multiple simultaneous refresh attempts
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+// Notify all subscribers when token is refreshed
+const onTokenRefreshed = () => {
+  refreshSubscribers.forEach((callback) => callback());
+  refreshSubscribers = [];
+};
+
+// Add request to queue while refreshing
+const addRefreshSubscriber = (callback) => {
+  refreshSubscribers.push(callback);
+};
+
 // Helper function to handle API responses
 const handleResponse = async (response) => {
   if (!response.ok) {
@@ -28,7 +43,7 @@ const handleResponse = async (response) => {
 };
 
 // Helper function to make API requests with credentials (cookies)
-const apiRequest = async (endpoint, options = {}) => {
+const apiRequest = async (endpoint, options = {}, retryCount = 0) => {
   // Fetch CSRF token if not present and request is not GET/HEAD
   const method = options.method || 'GET';
   if (!csrfToken && !['GET', 'HEAD'].includes(method.toUpperCase())) {
@@ -55,6 +70,44 @@ const apiRequest = async (endpoint, options = {}) => {
       ...options.headers,
     },
   });
+
+  // If unauthorized and not already refreshing, try to refresh token
+  if (response.status === 401 && endpoint !== '/auth/refresh' && endpoint !== '/auth/login' && retryCount === 0) {
+    
+    // If already refreshing, wait for it to complete
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        addRefreshSubscriber(async () => {
+          // Retry the original request after token refresh
+          const retryResponse = await apiRequest(endpoint, options, 1);
+          resolve(retryResponse);
+        });
+      });
+    }
+
+    // Start refreshing
+    isRefreshing = true;
+    
+    try {
+      // Attempt to refresh the token
+      await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      isRefreshing = false;
+      onTokenRefreshed();
+      
+      // Retry the original request
+      return apiRequest(endpoint, options, 1);
+    } catch (refreshError) {
+      console.error('Token refresh failed:', refreshError);
+      isRefreshing = false;
+      // If refresh fails, user needs to log in again
+      window.location.href = '/login';
+      throw new Error('Session expired. Please log in again.');
+    }
+  }
 
   return handleResponse(response);
 };

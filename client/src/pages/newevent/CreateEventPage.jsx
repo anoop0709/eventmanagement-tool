@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -15,15 +15,16 @@ export default function CreateEventPage() {
   const [step, setStep] = useState(1);
   const [eventId, setEventId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const formik = useFormik({
     initialValues: initialEventFormValues,
     onSubmit: async (values) => {
       setIsSubmitting(true);
       try {
-        console.log('Form values:', values);
-
         // Send exact structure to backend
         const eventData = {
           clientDetails: values.clientDetails || {},
@@ -31,28 +32,61 @@ export default function CreateEventPage() {
           status: 'draft',
         };
 
-        console.log('Sending to API:', eventData);
-
-        // On first form submit, create event as draft
-        const response = await eventAPI.createEvent(eventData);
-
-        console.log('API response:', response);
+        let response;
+        if (isEditMode && eventId) {
+          // Update existing event
+          response = await eventAPI.updateEvent(eventId, eventData);
+        } else {
+          // Create new event
+          response = await eventAPI.createEvent(eventData);
+          setEventId(response.event._id);
+        }
 
         // Store event ID for updates
-        setEventId(response.event._id);
         localStorage.setItem('currentEventId', response.event._id);
         localStorage.setItem('eventFormData', JSON.stringify(values));
 
         // Navigate to update details page
         navigate('/newevent/update-details');
       } catch (error) {
-        console.error('Error creating event:', error);
-        alert('Failed to create event: ' + error.message);
+        console.error('Error saving event:', error);
+        alert('Failed to save event: ' + error.message);
       } finally {
         setIsSubmitting(false);
       }
     },
   });
+
+  // Load existing event if in edit mode
+  useEffect(() => {
+    const editEventId = searchParams.get('edit');
+    if (editEventId) {
+      setIsEditMode(true);
+      setEventId(editEventId);
+      loadEventData(editEventId);
+    } else {
+      setLoading(false);
+    }
+  }, [searchParams]);
+
+  const loadEventData = async (id) => {
+    try {
+      setLoading(true);
+      const eventData = await eventAPI.getEventById(id);
+      
+      // Pre-populate form with existing event data
+      formik.setValues({
+        clientDetails: eventData.clientDetails || initialEventFormValues.clientDetails,
+        events: eventData.events || initialEventFormValues.events,
+      });
+    } catch (error) {
+      console.error('Error loading event:', error);
+      alert('Failed to load event data: ' + error.message);
+      navigate('/events');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const currentStepConfig = formStepsConfig.find((s) => s.id === step);
 
@@ -105,10 +139,23 @@ export default function CreateEventPage() {
     }
   };
 
+  // Show loading state while fetching event data
+  if (loading) {
+    return (
+      <ProtectedRoute>
+        <AppShell>
+          <div className="create-event-loading">Loading event data...</div>
+        </AppShell>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <AppShell>
-        <h1 className="create-event-title">Create Event</h1>
+        <h1 className="create-event-title">
+          {isEditMode ? 'Edit Event' : 'Create Event'}
+        </h1>
         <p className="create-event-subtitle">{currentStepConfig?.subtitle}</p>
 
         {/* Stepper Indicator */}

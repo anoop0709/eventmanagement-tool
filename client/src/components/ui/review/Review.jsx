@@ -1,8 +1,6 @@
 import './Review.css';
 
 export function Review({ formValues }) {
-  console.log('Review formValues:', formValues);
-
   // Helper to format field names to readable labels
   const formatLabel = (key) => {
     return key

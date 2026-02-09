@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import './LoginPage.css';
@@ -9,7 +9,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +36,21 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="login-container">
+        <div className="login-wrapper">
+          <div className="login-card">
+            <div className="login-header">
+              <h1 className="login-title">Loading...</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">

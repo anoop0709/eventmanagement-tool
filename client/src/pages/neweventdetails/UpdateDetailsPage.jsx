@@ -177,7 +177,6 @@ export default function UpdateDetailsPage() {
     });
   };
 
-  console.log(formik.values);
 
   const handleGallerySelect = (selectedImages) => {
     const { eventIndex, serviceKey, fieldName } = galleryModal;

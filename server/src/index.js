@@ -16,7 +16,7 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Connect to Database
 connectDB();
@@ -31,21 +31,11 @@ app.use(mongoSanitize()); // Prevent MongoDB injection
 // CORS with validation
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(',')
-  : ['http://localhost:5173'];
+  : ['http://localhost:5173', 'http://localhost:5174'];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        logger.warn('CORS blocked request', { origin });
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: true, // Allow all origins in development
     credentials: true,
   })
 );
