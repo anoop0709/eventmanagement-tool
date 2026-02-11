@@ -270,16 +270,19 @@ export const getUpcomingEvents = async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Calculate date 2 weeks from today
+    const twoWeeksFromNow = new Date(today);
+    twoWeeksFromNow.setDate(today.getDate() + 14);
+
     const query = {
-      eventDate: { $gte: today },
+      eventDate: { $gte: today, $lte: twoWeeksFromNow },
       status: { $ne: 'cancelled' },
     };
 
     // All company users can see all upcoming events
     const events = await Event.find(query)
       .populate('user', 'name email')
-      .sort({ eventDate: 1 })
-      .limit(50);
+      .sort({ eventDate: 1 });
 
     res.json(events);
   } catch (error) {
@@ -311,6 +314,10 @@ export const getDashboardStats = async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Calculate date 2 weeks from today
+    const twoWeeksFromNow = new Date(today);
+    twoWeeksFromNow.setDate(today.getDate() + 14);
+
     const [
       totalEvents,
       upcomingEvents,
@@ -320,7 +327,7 @@ export const getDashboardStats = async (req, res) => {
       draftEvents,
     ] = await Promise.all([
       Event.countDocuments(),
-      Event.countDocuments({ eventDate: { $gte: today }, status: { $ne: 'cancelled' } }),
+      Event.countDocuments({ eventDate: { $gte: today, $lte: twoWeeksFromNow }, status: { $ne: 'cancelled' } }),
       Event.countDocuments({ status: 'pending' }),
       Event.countDocuments({ status: 'confirmed' }),
       Event.countDocuments({ status: 'completed' }),
@@ -364,16 +371,11 @@ export const downloadEventPDF = async (req, res) => {
         generatedAt: new Date(),
       };
       await event.save();
-      console.log(JSON.stringify(event, null, 2));
       
       // Send the generated PDF
       const eventName = event.events?.[0]?.eventName || 'Event';
       const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal_${timestamp}.pdf`;
-      
-      console.log('Sending PDF with filename:', fileName);
-      console.log('Event name:', eventName);
-      console.log('Timestamp:', timestamp);
       
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

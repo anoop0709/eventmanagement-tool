@@ -13,6 +13,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, draft, pending, confirmed, completed, cancelled
   const [viewMode, setViewMode] = useState('list'); // list or calendar
+  const [searchQuery, setSearchQuery] = useState('');
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, eventId: null, eventName: '' });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -88,8 +89,28 @@ export default function EventsPage() {
   };
 
   const filteredEvents = events.filter((event) => {
-    if (filter === 'all') return true;
-    return event.status === filter;
+    // Filter by status
+    const statusMatch = filter === 'all' || event.status === filter;
+    
+    // Filter by search query
+    if (!searchQuery) return statusMatch;
+    
+    const query = searchQuery.toLowerCase();
+    const firstEvent = event.events?.[0] || {};
+    const clientDetails = event.clientDetails || {};
+    
+    const searchableFields = [
+      firstEvent.eventName,
+      firstEvent.eventType,
+      firstEvent.venue,
+      clientDetails.clientName,
+      clientDetails.email,
+      clientDetails.phone,
+    ].filter(Boolean).map(field => String(field).toLowerCase());
+    
+    const searchMatch = searchableFields.some(field => field.includes(query));
+    
+    return statusMatch && searchMatch;
   });
 
   return (
@@ -112,6 +133,26 @@ export default function EventsPage() {
                 Create New Event
               </button>
             </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="events-search-container">
+            <input
+              type="text"
+              className="events-search"
+              placeholder="Search by event name, client, venue, type..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                className="search-clear-btn"
+                onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {/* Filter Tabs */}

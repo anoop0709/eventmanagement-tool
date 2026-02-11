@@ -6,6 +6,7 @@ import { AdminRoute } from '@/components/auth/AdminRoute';
 import { Button } from '@/components/ui/button/Button';
 import { eventAPI } from '@/services/api';
 import './DashboardPage.css';
+import { Link } from 'react-router-dom';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
@@ -74,9 +75,9 @@ export default function DashboardPage() {
           <section className="dashboard-events">
             <div className="dashboard-section-header">
               <h2 className="dashboard-section-title">Upcoming events</h2>
-              <a className="dashboard-view-all" href="/events">
+              <Link className="dashboard-view-all" to="/events">
                 View all
-              </a>
+              </Link>
             </div>
             <EventList items={upcomingEvents} />
           </section>

@@ -40,10 +40,6 @@ export function TopBar() {
         </svg>
       </div>
 
-      <div className="topbar-search-container">
-        <input className="topbar-search" placeholder="Search events / customers…" />
-      </div>
-
       <div className="topbar-actions">
         <span className="topbar-username topbar-mobile-hide">Hi, {user?.name || 'Guest'}</span>
 

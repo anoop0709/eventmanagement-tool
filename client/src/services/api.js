@@ -266,6 +266,64 @@ export const eventAPI = {
   },
 };
 
+// Catalog API
+export const catalogAPI = {
+  // Get all decoration categories and images
+  getDecorations: async () => {
+    try {
+      const response = await apiRequest('/catalog/decorations');
+      return response;
+    } catch (error) {
+      console.error('Error fetching decorations:', error);
+      throw error;
+    }
+  },
+
+  // Upload decoration image
+  uploadDecoration: async (imageFile, category, retryCount = 0) => {
+    try {
+      // Fetch CSRF token if not present
+      if (!csrfToken) {
+        await fetchCSRFToken();
+      }
+
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      formData.append('category', category);
+
+      const response = await fetch(`${API_BASE_URL}/catalog/decorations/upload`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+        body: formData, // Don't set Content-Type, browser will set it with boundary
+      });
+
+      // Handle 401 - try refreshing token
+      if (response.status === 401 && retryCount === 0) {
+        // Attempt to refresh the token
+        await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        // Retry upload with refreshed session
+        return catalogAPI.uploadDecoration(imageFile, category, 1);
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new Error(error.message || 'Upload failed');
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Error uploading decoration:', error);
+      throw error;
+    }
+  },
+};
+
 // Initialize CSRF token on module load
 fetchCSRFToken();
 

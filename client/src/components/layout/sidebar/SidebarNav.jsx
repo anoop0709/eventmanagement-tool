@@ -7,7 +7,7 @@ const nav = [
   { href: '/', label: 'Dashboard' },
   { href: '/newevent', label: 'Create Event' },
   { href: '/events', label: 'Events' },
-  { href: '/catalog/decorations', label: 'Catalogs' },
+  { href: '/catalog', label: 'Catalogs' },
   { href: '/vendors', label: 'Vendors' },
   { href: '/quotes', label: 'Quotes' },
   { href: '/settings', label: 'Settings' },

@@ -11,6 +11,7 @@ import { requestId, requestLogger } from './middleware/logging.js';
 import authRoutes from './routes/auth.routes.js';
 import eventRoutes from './routes/event.routes.js';
 import userRoutes from './routes/user.routes.js';
+import catalogRoutes from './routes/catalog.routes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -92,6 +93,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/catalog', catalogRoutes);
 
 // Health check
 app.get('/api/v1/health', (req, res) => {
