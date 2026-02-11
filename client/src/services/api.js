@@ -233,13 +233,17 @@ export const eventAPI = {
 
       // Get filename from Content-Disposition header if available
       const contentDisposition = response.headers.get('Content-Disposition');
+      console.log('Content-Disposition header:', contentDisposition);
       let filename = 'Event_Proposal.pdf';
       if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        console.log('Filename match:', filenameMatch);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '');
+          console.log('Extracted filename:', filename);
         }
       }
+      console.log('Final filename:', filename);
 
       // Convert response to blob
       const blob = await response.blob();

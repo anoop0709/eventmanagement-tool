@@ -4,6 +4,8 @@ import { AppShell } from '@/components/layout/appshell/AppShell';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { eventAPI } from '@/services/api';
 import { CalendarView } from '@/components/calendar/CalendarView';
+import { useAuth } from '@/context/AuthContext';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog/ConfirmationDialog';
 import './EventsPage.css';
 
 export default function EventsPage() {
@@ -11,7 +13,10 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, draft, pending, confirmed, completed, cancelled
   const [viewMode, setViewMode] = useState('list'); // list or calendar
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, eventId: null, eventName: '' });
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchEvents();
@@ -36,6 +41,39 @@ export default function EventsPage() {
   const handleEditEvent = (eventId) => {
     // Navigate to create event page with edit mode
     navigate(`/newevent?edit=${eventId}`);
+  };
+
+  const handleDeleteClick = (eventId, eventName) => {
+    setDeleteDialog({ isOpen: true, eventId, eventName });
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await eventAPI.deleteEvent(deleteDialog.eventId);
+      setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
+      // Refresh the events list
+      await fetchEvents();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      setError('Failed to delete event. Please try again.');
+      setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
+  };
+
+  const canDeleteEvent = (event) => {
+    // Draft or pending: any user can delete
+    if (event.status === 'draft' || event.status === 'pending') {
+      return true;
+    }
+    // Confirmed: only admins can delete
+    if (event.status === 'confirmed' && user?.role === 'admin') {
+      return true;
+    }
+    return false;
   };
 
   const getStatusBadge = (status) => {
@@ -109,6 +147,14 @@ export default function EventsPage() {
               Completed ({events.filter((e) => e.status === 'completed').length})
             </button>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="events-error">
+              <p>{error}</p>
+              <button onClick={() => setError(null)}>Dismiss</button>
+            </div>
+          )}
 
           {/* Events List or Calendar */}
           {loading ? (
@@ -186,6 +232,14 @@ export default function EventsPage() {
                       >
                         View Details
                       </button>
+                      {canDeleteEvent(event) && (
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDeleteClick(event._id, firstEvent.eventName || 'Untitled Event')}
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -193,6 +247,17 @@ export default function EventsPage() {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={deleteDialog.isOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Event"
+          message={`Are you sure you want to delete "${deleteDialog.eventName}"? This action cannot be undone.`}
+          confirmText="Yes, Delete"
+          cancelText="Cancel"
+        />
       </AppShell>
     </ProtectedRoute>
   );

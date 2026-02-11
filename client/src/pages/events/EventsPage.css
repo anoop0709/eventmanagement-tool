@@ -98,6 +98,43 @@
   color: var(--text-secondary);
 }
 
+.events-error {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.events-error p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.events-error button {
+  padding: 0.25rem 0.75rem;
+  background-color: transparent;
+  border: 1px solid #991b1b;
+  color: #991b1b;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.events-error button:hover {
+  background-color: #991b1b;
+  color: white;
+}
+
 .events-empty p {
   margin-bottom: 1.5rem;
   font-size: 1.125rem;
@@ -206,7 +243,8 @@
 }
 
 .btn-edit,
-.btn-view {
+.btn-view,
+.btn-delete {
   flex: 1;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
@@ -242,6 +280,20 @@
 
 .btn-view:active {
   background-color: var(--primary-active);
+  transform: scale(0.98);
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  color: var(--text-white);
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+}
+
+.btn-delete:active {
+  background-color: #b91c1c;
   transform: scale(0.98);
 }
 

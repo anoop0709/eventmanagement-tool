@@ -364,10 +364,16 @@ export const downloadEventPDF = async (req, res) => {
         generatedAt: new Date(),
       };
       await event.save();
+      console.log(JSON.stringify(event, null, 2));
       
       // Send the generated PDF
       const eventName = event.events?.[0]?.eventName || 'Event';
-      const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal.pdf`;
+      const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal_${timestamp}.pdf`;
+      
+      console.log('Sending PDF with filename:', fileName);
+      console.log('Event name:', eventName);
+      console.log('Timestamp:', timestamp);
       
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
@@ -377,7 +383,12 @@ export const downloadEventPDF = async (req, res) => {
 
     // Send existing PDF
     const eventName = event.events?.[0]?.eventName || 'Event';
-    const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal.pdf`;
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal_${timestamp}.pdf`;
+    
+    console.log('Sending existing PDF with filename:', fileName);
+    console.log('Event name:', eventName);
+    console.log('Timestamp:', timestamp);
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

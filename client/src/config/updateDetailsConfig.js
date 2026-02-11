@@ -24,7 +24,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -38,8 +38,8 @@ export const serviceDetailFields = {
       type: 'select',
       placeholder: 'Select an option',
       options: [
-        { value: 'true', label: 'Yes' },
-        { value: 'false', label: 'No' },
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
         { value: 'needToCheck', label: 'Need to check' },
       ],
     },
@@ -57,7 +57,7 @@ export const serviceDetailFields = {
       ],
     },
     {
-      name: 'decorationPhotos',
+      name: 'decorationStyle',
       label: 'Select Decoration',
       type: 'gallery-select',
       galleryPath: '/images/decorations',
@@ -72,8 +72,8 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'seatingArrangement',
-      label: 'Seating Arrangement',
+      name: 'stageSeatingArrangement',
+      label: 'Stage Seating Arrangement',
       type: 'select',
       placeholder: 'Select seating arrangement',
       options: [
@@ -106,7 +106,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹50,000',
@@ -211,8 +211,8 @@ export const serviceDetailFields = {
           type: 'select',
           placeholder: 'Select serving staff requirement',
           options: [
-            { value: 'true', label: 'Yes' },
-            { value: 'false', label: 'No' },
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
           ],
           required: false,
         },
@@ -228,7 +228,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹100,000',
@@ -271,8 +271,8 @@ export const serviceDetailFields = {
           type: 'select',
           placeholder: 'Select driver requirement',
           options: [
-            { value: 'true', label: 'Yes' },
-            { value: 'false', label: 'No' },
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
           ],
           required: false,
         },
@@ -296,7 +296,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹30,000',
@@ -317,9 +317,9 @@ export const serviceDetailFields = {
           placeholder: 'e.g., airbnb, hotel, resort',
           options: [
             { value: 'airbnb', label: 'Airbnb' },
-            { value: 'hotel3Star', label: 'Hotel 3 Star' },
-            { value: 'hotel4Star', label: 'Hotel 4 Star' },
-            { value: 'hotel5Star', label: 'Hotel 5 Star' },
+            { value: 'hotel 3 Star', label: 'Hotel 3 Star' },
+            { value: 'hotel 4 Star', label: 'Hotel 4 Star' },
+            { value: 'hotel 5 Star', label: 'Hotel 5 Star' },
             { value: 'resort', label: 'Resort' },
           ],
           required: false,
@@ -344,8 +344,8 @@ export const serviceDetailFields = {
           type: 'select',
           placeholder: 'e.g., Yes, No, Need to check',
           options: [
-            { value: 'true', label: 'Yes' },
-            { value: 'false', label: 'No' },
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
             { value: 'needToCheck', label: 'Need to check' },
           ],
           required: false,
@@ -379,7 +379,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹50,000',
@@ -449,7 +449,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹50,000',
@@ -478,8 +478,13 @@ export const serviceDetailFields = {
     {
       name: 'chairCover',
       label: 'Chair Cover',
-      type: 'text',
-      placeholder: 'e.g., yes, no, need to check',
+          type: 'select',
+          placeholder: 'e.g., Yes, No, Need to check',
+          options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
+            { value: 'needToCheck', label: 'Need to check' },
+          ],
       required: false,
     },
     {
@@ -506,8 +511,13 @@ export const serviceDetailFields = {
     {
       name: 'tableCover',
       label: 'Table Cover',
-      type: 'text',
-      placeholder: 'e.g., yes, no, need to check',
+          type: 'select',
+          placeholder: 'e.g., Yes, No, Need to check',
+          options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
+            { value: 'needToCheck', label: 'Need to check' },
+          ],
       required: false,
     },
     {
@@ -527,8 +537,13 @@ export const serviceDetailFields = {
     {
       name: 'ceilingDecoration',
       label: 'Ceiling Decoration',
-      type: 'text',
-      placeholder: 'e.g., yes, no, need to check',
+         type: 'select',
+          placeholder: 'e.g., Yes, No, Need to check',
+          options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
+            { value: 'needToCheck', label: 'Need to check' },
+          ],
       required: false,
     },
     {
@@ -554,7 +569,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹50,000',
@@ -578,7 +593,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹25,000',
@@ -602,7 +617,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹25,000',
@@ -626,7 +641,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹25,000',
@@ -657,7 +672,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹80,000',
@@ -681,7 +696,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹10,000',
@@ -754,7 +769,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -785,7 +800,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹150,000',
@@ -825,7 +840,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹200,000',
@@ -850,8 +865,13 @@ export const serviceDetailFields = {
     {
       name: 'ceilingDecoration',
       label: 'Ceiling Decoration',
-      type: 'text',
-      placeholder: 'e.g., yes, no, need to check',
+          type: 'select',
+          placeholder: 'e.g., Yes, No, Need to check',
+          options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
+            { value: 'needToCheck', label: 'Need to check' },
+          ],
       required: false,
     },
     {
@@ -877,7 +897,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -937,7 +957,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -983,7 +1003,7 @@ export const serviceDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -1017,7 +1037,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹40,000',
@@ -1055,7 +1075,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹40,000',
@@ -1086,7 +1106,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹40,000',
@@ -1117,7 +1137,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹60,000',
@@ -1148,7 +1168,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹60,000',
@@ -1172,7 +1192,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹15,000',
@@ -1203,7 +1223,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹40,000',
@@ -1227,7 +1247,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹50,000',
@@ -1251,7 +1271,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹25,000',
@@ -1275,7 +1295,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹15,000',
@@ -1313,7 +1333,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -1344,7 +1364,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -1382,7 +1402,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -1413,7 +1433,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹15,000',
@@ -1437,7 +1457,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹20,000',
@@ -1461,7 +1481,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹30,000',
@@ -1485,7 +1505,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹25,000',
@@ -1509,7 +1529,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹15,000',
@@ -1533,7 +1553,7 @@ export const addOnDetailFields = {
       required: false,
     },
     {
-      name: 'budget',
+      name: 'budgetEstimate',
       label: 'Budget Estimate',
       type: 'text',
       placeholder: 'e.g., ₹10,000',
