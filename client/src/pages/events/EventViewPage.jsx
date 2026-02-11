@@ -15,6 +15,7 @@ const EventViewPage = () => {
   const [expandedAddons, setExpandedAddons] = useState({});
   const [servicesExpanded, setServicesExpanded] = useState(false);
   const [addonsExpanded, setAddonsExpanded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -31,6 +32,19 @@ const EventViewPage = () => {
 
     fetchEvent();
   }, [id]);
+
+  const handleDownloadPDF = async () => {
+    try {
+      setDownloading(true);
+      await eventAPI.downloadEventPDF(id);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      console.error('Error details:', error.message, error.stack);
+      alert(`Failed to download PDF: ${error.message || 'Please try again.'}`);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const toggleService = (key) => {
     setExpandedServices((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -270,7 +284,16 @@ const EventViewPage = () => {
             <Button variant="ghost" onClick={() => navigate(-1)} className="back-button">
               ← Back
             </Button>
-            <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+            <div className="header-actions">
+              <Button 
+                variant="primary" 
+                onClick={handleDownloadPDF}
+                disabled={downloading}
+              >
+                {downloading ? 'Downloading...' : '📄 Download PDF'}
+              </Button>
+              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+            </div>
           </div>
           <h1 className="event-title">{firstEvent.eventName || 'Event Details'}</h1>
           <p className="event-subtitle">Created on {formatDate(event.createdAt)}</p>

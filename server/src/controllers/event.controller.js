@@ -1,4 +1,8 @@
 import Event from '../models/Event.model.js';
+import { generateEventPDF } from '../services/pdf.service.js';
+import { sendEventDetailsEmail, sendAdminNotificationEmail } from '../services/email.service.js';
+import { calculateTotalBudget } from '../utils/budgetCalculator.js';
+import logger from '../config/logger.js';
 
 // @desc    Get all events
 // @route   GET /api/events
@@ -37,14 +41,64 @@ export const getEventById = async (req, res) => {
 // @access  Private
 export const createEvent = async (req, res) => {
   try {
-    // Create event with draft status by default
+    // Check if status is 'pending' (direct submission)
+    const isSubmitting = req.body.status === 'pending';
+
+    // Calculate total budget if submitting
+    let totalBudget = req.body.totalBudget;
+    if (isSubmitting) {
+      const budgetData = calculateTotalBudget({
+        events: req.body.events || [],
+      });
+      totalBudget = budgetData.grandTotal;
+    }
+
+    // Create event
     const event = await Event.create({
       user: req.user._id,
       clientDetails: req.body.clientDetails || {},
       events: req.body.events || [],
       status: req.body.status || 'draft',
-      totalBudget: req.body.totalBudget,
+      totalBudget: totalBudget,
     });
+
+    // If submitting event directly, generate PDF and send email
+    if (isSubmitting) {
+      try {
+        const eventDataForPDF = event.toObject();
+        
+        // Generate PDF
+        logger.info('Generating PDF for event submission...');
+        const pdfBuffer = await generateEventPDF(eventDataForPDF);
+        
+        // Store PDF in database
+        event.proposalPdf = {
+          data: pdfBuffer,
+          generatedAt: new Date(),
+        };
+        await event.save();
+        
+        // Send email to customer
+        const customerEmail = eventDataForPDF.clientDetails?.email;
+        const clientName = eventDataForPDF.clientDetails?.clientName || 'Valued Customer';
+        
+        if (customerEmail) {
+          logger.info(`Sending email to customer: ${customerEmail}`);
+          await sendEventDetailsEmail(customerEmail, clientName, eventDataForPDF, pdfBuffer);
+          
+          // Send notification to admin
+          await sendAdminNotificationEmail(eventDataForPDF);
+          
+          logger.info('Event submission email sent successfully');
+        } else {
+          logger.warn('Customer email not found, skipping email notification');
+        }
+      } catch (emailError) {
+        // Log error but don't fail the request
+        logger.error('Error sending email for event submission:', emailError);
+        // Event is still created successfully even if email fails
+      }
+    }
 
     // Return created event with ID for subsequent updates
     res.status(201).json({
@@ -107,24 +161,73 @@ export const updateEvent = async (req, res) => {
       });
     }
 
+    // Check if status is being changed to 'pending' (submission)
+    const isSubmitting = req.body.status === 'pending' && event.status !== 'pending';
+
     // Update status if explicitly set
     if (req.body.status) {
       updateData.status = req.body.status;
     }
 
-    // Update totalBudget if provided
-    if (req.body.totalBudget !== undefined) {
+    // Calculate and update total budget if submitting
+    if (isSubmitting) {
+      const budgetData = calculateTotalBudget({
+        events: updateData.events || event.events,
+      });
+      updateData.totalBudget = budgetData.grandTotal;
+    } else if (req.body.totalBudget !== undefined) {
+      // Update totalBudget if provided and not submitting
       updateData.totalBudget = req.body.totalBudget;
     }
 
-    const updatedEvent = await Event.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
+    // Clear existing PDF to force regeneration on next download
+    const existingEventForPdfClear = await Event.findById(req.params.id);
+    if (existingEventForPdfClear?.proposalPdf?.data) {
+      updateData.proposalPdf = null;
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    }).populate('user', 'name email');
+
+    // If submitting event (status changed to pending), generate PDF and send email
+    if (isSubmitting) {
+      try {
+        const eventDataForPDF = updatedEvent.toObject();
+        
+        // Generate PDF
+        logger.info('Generating PDF for event submission...');
+        const pdfBuffer = await generateEventPDF(eventDataForPDF);
+        
+        // Store PDF in database
+        updatedEvent.proposalPdf = {
+          data: pdfBuffer,
+          generatedAt: new Date(),
+        };
+        await updatedEvent.save();
+        
+        // Send email to customer
+        const customerEmail = eventDataForPDF.clientDetails?.email;
+        const clientName = eventDataForPDF.clientDetails?.clientName || 'Valued Customer';
+        
+        if (customerEmail) {
+          logger.info(`Sending email to customer: ${customerEmail}`);
+          await sendEventDetailsEmail(customerEmail, clientName, eventDataForPDF, pdfBuffer);
+          
+          // Send notification to admin
+          await sendAdminNotificationEmail(eventDataForPDF);
+          
+          logger.info('Event submission email sent successfully');
+        } else {
+          logger.warn('Customer email not found, skipping email notification');
+        }
+      } catch (emailError) {
+        // Log error but don't fail the request
+        logger.error('Error sending email for event submission:', emailError);
+        // Event is still updated successfully even if email fails
       }
-    ).populate('user', 'name email');
+    }
 
     res.json({
       message: 'Event updated successfully',
@@ -233,6 +336,55 @@ export const getDashboardStats = async (req, res) => {
       draftEvents,
     });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Download event proposal PDF
+// @route   GET /api/events/:id/download-pdf
+// @access  Private
+export const downloadEventPDF = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Check if PDF exists
+    if (!event.proposalPdf || !event.proposalPdf.data) {
+      // If PDF doesn't exist, generate it on the fly
+      logger.info('PDF not found in database, generating new one...');
+      const eventDataForPDF = event.toObject();
+      const pdfBuffer = await generateEventPDF(eventDataForPDF);
+      
+      // Store for future use
+      event.proposalPdf = {
+        data: pdfBuffer,
+        generatedAt: new Date(),
+      };
+      await event.save();
+      
+      // Send the generated PDF
+      const eventName = event.events?.[0]?.eventName || 'Event';
+      const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal.pdf`;
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      return res.send(pdfBuffer);
+    }
+
+    // Send existing PDF
+    const eventName = event.events?.[0]?.eventName || 'Event';
+    const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal.pdf`;
+    
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', event.proposalPdf.data.length);
+    res.send(event.proposalPdf.data);
+  } catch (error) {
+    logger.error('Error downloading PDF:', error);
     res.status(500).json({ message: error.message });
   }
 };

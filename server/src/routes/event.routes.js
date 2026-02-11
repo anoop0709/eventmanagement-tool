@@ -8,6 +8,7 @@ import {
   getUpcomingEvents,
   getDraftEvents,
   getDashboardStats,
+  downloadEventPDF,
 } from '../controllers/event.controller.js';
 import { protect, admin } from '../middleware/auth.js';
 import { apiLimiter } from '../middleware/rateLimiter.js';
@@ -24,6 +25,9 @@ router.route('/').get(protect, getEvents).post(protect, eventValidation, createE
 router.get('/calendar/upcoming', protect, getUpcomingEvents);
 router.get('/drafts', protect, getDraftEvents);
 router.get('/dashboard/stats', protect, admin, getDashboardStats);
+
+// Download PDF route
+router.get('/:id/download-pdf', protect, downloadEventPDF);
 
 router
   .route('/:id')

@@ -1,6 +1,7 @@
 export const formStepsConfig = [
   {
     id: 1,
+    title: 'Client Info',
     subtitle: 'Start with basics, then add services like decorations and catering.',
     sections: [
       {
@@ -47,6 +48,7 @@ export const formStepsConfig = [
   },
   {
     id: 2,
+    title: 'Event Details',
     subtitle: 'Add one or more events (e.g., Wedding, Reception, Mehandi)',
     sections: [
       {
@@ -343,18 +345,19 @@ export const formStepsConfig = [
         { label: 'Save draft', action: 'draft' },
         { label: 'Back: Client Information', action: 'back' },
       ],
-      primary: { label: 'Next: Review', action: 'next' },
+      primary: { label: 'Next: Service Details', action: 'next' },
     },
   },
   {
     id: 3,
-    subtitle: 'Review & Submit',
+    title: 'Service Details',
+    subtitle: 'Add more details for selected services and add-ons',
     sections: [
       {
-        title: 'Review & Submit',
-        subtitle: 'Review your event details and submit your request',
-        type: 'review',
-        fields: [{ type: 'review' }],
+        title: 'Service & Add-on Details',
+        section: 'eventDetails',
+        type: 'service-details',
+        fields: [],
       },
     ],
     actions: {

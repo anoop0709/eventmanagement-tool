@@ -198,6 +198,68 @@ export const eventAPI = {
   getDashboardStats: async () => {
     return apiRequest('/events/dashboard/stats');
   },
+
+  // Download event PDF
+  downloadEventPDF: async (eventId) => {
+    try {
+      // Fetch CSRF token if not present
+      if (!csrfToken) {
+        await fetchCSRFToken();
+      }
+
+      const response = await fetch(`${API_BASE_URL}/events/${eventId}/download-pdf`, {
+        method: 'GET',
+        credentials: 'include', // Send cookies with request
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+      });
+
+      // Handle 401 - try refreshing token
+      if (response.status === 401) {
+        // Attempt to refresh the token
+        await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        // Retry download with refreshed session
+        return eventAPI.downloadEventPDF(eventId);
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Failed to download PDF' }));
+        throw new Error(error.message || 'Failed to download PDF');
+      }
+
+      // Get filename from Content-Disposition header if available
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'Event_Proposal.pdf';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Convert response to blob
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('PDF download error:', error);
+      throw error;
+    }
+  },
 };
 
 // Initialize CSRF token on module load

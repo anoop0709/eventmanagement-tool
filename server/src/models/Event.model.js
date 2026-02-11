@@ -82,6 +82,10 @@ const eventSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
+    proposalPdf: {
+      data: Buffer,
+      generatedAt: Date,
+    },
   },
   {
     timestamps: true,
