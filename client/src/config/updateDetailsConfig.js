@@ -42,6 +42,7 @@ export const serviceDetailFields = {
         { value: 'no', label: 'No' },
         { value: 'needToCheck', label: 'Need to check' },
       ],
+required: true,
     },
     {
       name: 'theme',
@@ -55,6 +56,7 @@ export const serviceDetailFields = {
         { value: 'balloon', label: 'Balloon' },
         { value: 'mixed', label: 'Mixed' },
       ],
+required: true,
     },
     {
       name: 'decorationStyle',
@@ -83,7 +85,8 @@ export const serviceDetailFields = {
         { value: 'oonjal', label: 'Oonjal' },
         { value: 'custom', label: 'Custom' },
       ],
-    },
+      required: true,
+},
     {
       name: 'numberOfSeats',
       label: 'Number of Seats',
@@ -284,6 +287,7 @@ export const serviceDetailFields = {
           showTimeSelect: true,
           minDate: new Date(),
           dateFormat: 'dd MMM yyyy, h:mm aa',
+required: false,
         },
       ],
     },
@@ -358,6 +362,7 @@ export const serviceDetailFields = {
           showTimeSelect: true,
           minDate: new Date(),
           dateFormat: 'dd MMM yyyy, h:mm aa',
+required: false,
         },
         {
           name: 'checkOutDateTime',
@@ -367,6 +372,7 @@ export const serviceDetailFields = {
           showTimeSelect: true,
           minDate: new Date(),
           dateFormat: 'dd MMM yyyy, h:mm aa',
+          required: false,
         },
       ],
     },
@@ -428,6 +434,7 @@ export const serviceDetailFields = {
           showTimeSelect: true,
           minDate: new Date(),
           dateFormat: 'dd MMM yyyy, h:mm aa',
+          required: false,
         },
         {
           name: 'checkOutDateTime',
@@ -437,6 +444,7 @@ export const serviceDetailFields = {
           showTimeSelect: true,
           minDate: new Date(),
           dateFormat: 'dd MMM yyyy, h:mm aa',
+required: false,
         },
       ],
     },
@@ -478,13 +486,13 @@ export const serviceDetailFields = {
     {
       name: 'chairCover',
       label: 'Chair Cover',
-          type: 'select',
-          placeholder: 'e.g., Yes, No, Need to check',
-          options: [
-            { value: 'yes', label: 'Yes' },
-            { value: 'no', label: 'No' },
-            { value: 'needToCheck', label: 'Need to check' },
-          ],
+      type: 'select',
+      placeholder: 'e.g., Yes, No, Need to check',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+        { value: 'needToCheck', label: 'Need to check' },
+      ],
       required: false,
     },
     {
@@ -511,13 +519,13 @@ export const serviceDetailFields = {
     {
       name: 'tableCover',
       label: 'Table Cover',
-          type: 'select',
-          placeholder: 'e.g., Yes, No, Need to check',
-          options: [
-            { value: 'yes', label: 'Yes' },
-            { value: 'no', label: 'No' },
-            { value: 'needToCheck', label: 'Need to check' },
-          ],
+      type: 'select',
+      placeholder: 'e.g., Yes, No, Need to check',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+        { value: 'needToCheck', label: 'Need to check' },
+      ],
       required: false,
     },
     {
@@ -537,13 +545,13 @@ export const serviceDetailFields = {
     {
       name: 'ceilingDecoration',
       label: 'Ceiling Decoration',
-         type: 'select',
-          placeholder: 'e.g., Yes, No, Need to check',
-          options: [
-            { value: 'yes', label: 'Yes' },
-            { value: 'no', label: 'No' },
-            { value: 'needToCheck', label: 'Need to check' },
-          ],
+      type: 'select',
+      placeholder: 'e.g., Yes, No, Need to check',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+        { value: 'needToCheck', label: 'Need to check' },
+      ],
       required: false,
     },
     {
@@ -830,6 +838,7 @@ export const serviceDetailFields = {
       showTimeSelect: true,
       minDate: new Date(),
       dateFormat: 'dd MMM yyyy, h:mm aa',
+required: false,
     },
     {
       name: 'notes',
@@ -865,13 +874,13 @@ export const serviceDetailFields = {
     {
       name: 'ceilingDecoration',
       label: 'Ceiling Decoration',
-          type: 'select',
-          placeholder: 'e.g., Yes, No, Need to check',
-          options: [
-            { value: 'yes', label: 'Yes' },
-            { value: 'no', label: 'No' },
-            { value: 'needToCheck', label: 'Need to check' },
-          ],
+      type: 'select',
+      placeholder: 'e.g., Yes, No, Need to check',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+        { value: 'needToCheck', label: 'Need to check' },
+      ],
       required: false,
     },
     {

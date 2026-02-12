@@ -247,7 +247,7 @@ export const eventAPI = {
 
       // Convert response to blob
       const blob = await response.blob();
-      
+
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -255,7 +255,7 @@ export const eventAPI = {
       link.download = filename;
       document.body.appendChild(link);
       link.click();
-      
+
       // Cleanup
       link.remove();
       window.URL.revokeObjectURL(url);
@@ -319,6 +319,37 @@ export const catalogAPI = {
       return response.json();
     } catch (error) {
       console.error('Error uploading decoration:', error);
+      throw error;
+    }
+  },
+
+  // Delete decoration image
+  deleteDecoration: async (category, filename, retryCount = 0) => {
+    try {
+      if (!csrfToken) {
+        await fetchCSRFToken();
+      }
+      const response = await fetch(`${API_BASE_URL}/catalog/decorations/${category}/${filename}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+      });
+      if (response.status === 401 && retryCount === 0) {
+        await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        return catalogAPI.deleteDecoration(category, filename, 1);
+      }
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Delete failed' }));
+        throw new Error(error.message || 'Delete failed');
+      }
+      return response.json();
+    } catch (error) {
+      console.error('Error deleting decoration:', error);
       throw error;
     }
   },

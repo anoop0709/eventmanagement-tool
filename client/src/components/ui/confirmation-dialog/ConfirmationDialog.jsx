@@ -1,6 +1,14 @@
 import './ConfirmationDialog.css';
 
-export const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message, confirmText = 'Yes, Submit', cancelText = 'Go Back' }) => {
+export const ConfirmationDialog = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Yes, Submit',
+  cancelText = 'Go Back',
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -13,18 +21,10 @@ export const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message,
           <p>{message}</p>
         </div>
         <div className="confirmation-dialog-actions">
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn-secondary"
-          >
+          <button type="button" onClick={onClose} className="btn-secondary">
             {cancelText}
           </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="btn-primary"
-          >
+          <button type="button" onClick={onConfirm} className="btn-primary">
             {confirmText}
           </button>
         </div>

@@ -285,11 +285,7 @@ const EventViewPage = () => {
               ← Back
             </Button>
             <div className="header-actions">
-              <Button 
-                variant="primary" 
-                onClick={handleDownloadPDF}
-                disabled={downloading}
-              >
+              <Button variant="primary" onClick={handleDownloadPDF} disabled={downloading}>
                 {downloading ? 'Downloading...' : '📄 Download PDF'}
               </Button>
               <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>

@@ -93,7 +93,6 @@ export default function CreateEventPage() {
     }
   };
 
-
   // Load existing event if in edit mode
   useEffect(() => {
     const editEventId = searchParams.get('edit');

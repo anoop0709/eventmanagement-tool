@@ -127,6 +127,7 @@
 .btn-secondary:hover {
   background-color: var(--bg-gray-200);
   border-color: var(--border-gray-dark);
+  color: var(--text-primary);
 }
 
 .btn-secondary:active {

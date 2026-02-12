@@ -106,7 +106,7 @@
 .catalog-category-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--primary-color);
   margin: 0 0 1.5rem 0;
   text-transform: capitalize;
 }
@@ -161,6 +161,16 @@
   word-break: break-word;
 }
 
+.catalog-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.catalog-image-card:hover .catalog-delete-btn {
+  opacity: 1;
+}
 /* Modal */
 .catalog-modal {
   position: fixed;
@@ -223,18 +233,17 @@
 
 .form-group {
   margin-bottom: 1.5rem;
-}header {
-    flex-direction: column;
-    gap: 1rem;
-  }
+}
+header {
+  flex-direction: column;
+  gap: 1rem;
+}
 
-  .btn-upload {
-    width: 100%;
-  }
+.btn-upload {
+  width: 100%;
+}
 
-  .catalog-
-
-.form-group label {
+.catalog- .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;

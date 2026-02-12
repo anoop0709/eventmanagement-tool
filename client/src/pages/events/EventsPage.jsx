@@ -91,14 +91,14 @@ export default function EventsPage() {
   const filteredEvents = events.filter((event) => {
     // Filter by status
     const statusMatch = filter === 'all' || event.status === filter;
-    
+
     // Filter by search query
     if (!searchQuery) return statusMatch;
-    
+
     const query = searchQuery.toLowerCase();
     const firstEvent = event.events?.[0] || {};
     const clientDetails = event.clientDetails || {};
-    
+
     const searchableFields = [
       firstEvent.eventName,
       firstEvent.eventType,
@@ -106,10 +106,12 @@ export default function EventsPage() {
       clientDetails.clientName,
       clientDetails.email,
       clientDetails.phone,
-    ].filter(Boolean).map(field => String(field).toLowerCase());
-    
-    const searchMatch = searchableFields.some(field => field.includes(query));
-    
+    ]
+      .filter(Boolean)
+      .map((field) => String(field).toLowerCase());
+
+    const searchMatch = searchableFields.some((field) => field.includes(query));
+
     return statusMatch && searchMatch;
   });
 
@@ -276,7 +278,9 @@ export default function EventsPage() {
                       {canDeleteEvent(event) && (
                         <button
                           className="btn-delete"
-                          onClick={() => handleDeleteClick(event._id, firstEvent.eventName || 'Untitled Event')}
+                          onClick={() =>
+                            handleDeleteClick(event._id, firstEvent.eventName || 'Untitled Event')
+                          }
                         >
                           Delete
                         </button>

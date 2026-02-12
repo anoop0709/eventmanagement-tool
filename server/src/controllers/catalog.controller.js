@@ -97,3 +97,27 @@ export const uploadDecorationImage = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Delete a decoration image
+// @route   DELETE /api/catalog/decorations/:category/:filename
+// @access  Private/Admin
+export const deleteDecorationImage = async (req, res) => {
+  try {
+    const { category, filename } = req.params;
+    if (!category || !filename) {
+      return res.status(400).json({ message: 'Category and filename required' });
+    }
+
+    const decorationsPath = path.resolve(__dirname, '../../../client/public/images/decorations');
+    const filePath = path.join(decorationsPath, category, filename);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
+    fs.unlinkSync(filePath);
+    logger.info(`Image deleted: /images/decorations/${category}/${filename}`);
+    res.status(200).json({ message: 'Image deleted successfully' });
+  } catch (error) {
+    logger.error('Error deleting decoration image:', error);
+    res.status(500).json({ message: error.message });
+  }
+};

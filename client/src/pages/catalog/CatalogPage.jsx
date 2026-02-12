@@ -4,6 +4,8 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { catalogAPI } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import './CatalogPage.css';
+import { useSnackbar } from '../../context/SnackbarContext';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog/ConfirmationDialog';
 
 export default function CatalogPage() {
   const [catalog, setCatalog] = useState([]);
@@ -15,7 +17,10 @@ export default function CatalogPage() {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // { category, image }
   const { user } = useAuth();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchCatalog();
@@ -55,10 +60,17 @@ export default function CatalogPage() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Validate all files
-    const invalidFiles = files.filter(file => {
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp'];
+    const invalidFiles = files.filter((file) => {
+      const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/svg+xml',
+        'image/webp',
+      ];
       const isValidType = allowedTypes.includes(file.type);
       const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
       return !isValidType || !isValidSize;
@@ -74,12 +86,12 @@ export default function CatalogPage() {
   };
 
   const removeFile = (index) => {
-    setUploadFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (uploadFiles.length === 0) {
       setUploadError('Please select at least one image file');
       return;
@@ -93,15 +105,15 @@ export default function CatalogPage() {
     try {
       setUploading(true);
       setUploadError(null);
-      
+
       // Upload all files
       for (let i = 0; i < uploadFiles.length; i++) {
         await catalogAPI.uploadDecoration(uploadFiles[i], uploadCategory);
       }
-      
+
       // Refresh catalog
       await fetchCatalog();
-      
+
       // Close modal and reset
       setShowUploadModal(false);
       setUploadFiles([]);
@@ -117,6 +129,33 @@ export default function CatalogPage() {
     setShowUploadModal(false);
     setUploadFiles([]);
     setUploadError(null);
+  };
+
+  // Handler to open confirmation dialog
+  const handleDeleteClick = (category, image) => {
+    setDeleteTarget({ category, image });
+    setDeleteDialogOpen(true);
+  };
+
+  // Handler to confirm deletion
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    try {
+      await catalogAPI.deleteDecoration(deleteTarget.category, deleteTarget.image.name);
+      await fetchCatalog();
+      showSnackbar('Image deleted', 'success');
+    } catch (err) {
+      showSnackbar(err.message || 'Failed to delete image', 'error');
+    } finally {
+      setDeleteDialogOpen(false);
+      setDeleteTarget(null);
+    }
+  };
+
+  // Handler to close dialog
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDeleteTarget(null);
   };
 
   return (
@@ -170,20 +209,29 @@ export default function CatalogPage() {
                   </h2>
                   <div className="catalog-gallery">
                     {category.images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="catalog-image-card"
-                        onClick={() => handleImageClick(image.url)}
-                      >
+                      <div key={index} className="catalog-image-card">
                         <img
                           src={image.url}
                           alt={image.name}
                           className="catalog-image"
                           loading="lazy"
+                          onClick={() => handleImageClick(image.url)}
                         />
                         <div className="catalog-image-overlay">
                           <span className="catalog-image-name">{image.name}</span>
                         </div>
+                        {user?.isAdmin && (
+                          <button
+                            className={'catalog-delete-btn btn-secondary btn-small'}
+                            title="Delete image"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(category.category, image);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -199,7 +247,11 @@ export default function CatalogPage() {
                 <button className="catalog-modal-close" onClick={closeModal}>
                   ✕
                 </button>
-                <img src={selectedImage} alt="Selected decoration" className="catalog-modal-image" />
+                <img
+                  src={selectedImage}
+                  alt="Selected decoration"
+                  className="catalog-modal-image"
+                />
               </div>
             </div>
           )}
@@ -247,7 +299,9 @@ export default function CatalogPage() {
 
                   {uploadFiles.length > 0 && (
                     <div className="file-list">
-                      <p className="file-count">{uploadFiles.length} file{uploadFiles.length > 1 ? 's' : ''} selected:</p>
+                      <p className="file-count">
+                        {uploadFiles.length} file{uploadFiles.length > 1 ? 's' : ''} selected:
+                      </p>
                       <ul>
                         {uploadFiles.map((file, index) => (
                           <li key={index}>
@@ -268,9 +322,7 @@ export default function CatalogPage() {
                     </div>
                   )}
 
-                  {uploadError && (
-                    <div className="upload-error">{uploadError}</div>
-                  )}
+                  {uploadError && <div className="upload-error">{uploadError}</div>}
 
                   <div className="upload-modal-actions">
                     <button
@@ -286,7 +338,9 @@ export default function CatalogPage() {
                       className="btn-upload"
                       disabled={uploading || uploadFiles.length === 0}
                     >
-                      {uploading ? `Uploading ${uploadFiles.length} file${uploadFiles.length > 1 ? 's' : ''}...` : 'Upload'}
+                      {uploading
+                        ? `Uploading ${uploadFiles.length} file${uploadFiles.length > 1 ? 's' : ''}...`
+                        : 'Upload'}
                     </button>
                   </div>
                 </form>
@@ -294,6 +348,16 @@ export default function CatalogPage() {
             </div>
           )}
         </div>
+        {/* Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          onClose={() => handleDeleteCancel()}
+          onConfirm={handleDeleteConfirm}
+          title="Confirm Submission"
+          message={'Are you sure you want to delete this image? This action cannot be undone.'}
+          confirmText="Yes, Delete"
+          cancelText="Cancel"
+        />
       </AppShell>
     </ProtectedRoute>
   );

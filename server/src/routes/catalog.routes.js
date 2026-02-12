@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDecorationCatalog, uploadDecorationImage } from '../controllers/catalog.controller.js';
+import { deleteDecorationImage, getDecorationCatalog, uploadDecorationImage } from '../controllers/catalog.controller.js';
 import { protect, admin } from '../middleware/auth.js';
 import { uploadDecoration } from '../middleware/upload.js';
 
@@ -14,4 +14,6 @@ router.get('/decorations', getDecorationCatalog);
 // POST /api/catalog/decorations/upload (Admin only)
 router.post('/decorations/upload', admin, uploadDecoration, uploadDecorationImage);
 
+// DELETE /api/catalog/decorations/:category/:filename
+router.delete('/decorations/:category/:filename', admin, deleteDecorationImage);
 export default router;
