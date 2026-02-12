@@ -230,7 +230,9 @@ export default function CreateEventPage() {
       .map(([key]) => ({ key, label: formatLabel(key) }));
   };
 
-  const openGalleryModal = (eventIndex, serviceKey, fieldName, theme = '') => {
+  const openGalleryModal = (eventIndex, serviceKey, fieldName) => {
+let theme = formik.values.eventDetails?.[eventIndex]?.services?.[serviceKey]?.theme || '';
+
     if (theme === 'mixed') {
       theme = '';
     }
