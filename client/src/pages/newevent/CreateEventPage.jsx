@@ -17,7 +17,7 @@ import { eventAPI } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import { useSnackbar } from '@/context/SnackbarContext';
 import './CreateEventPage.css';
-import '../neweventdetails/UpdateDetailsPage.css';
+import './UpdateDetailsPage.css';
 
 export default function CreateEventPage() {
   const [step, setStep] = useState(1);
@@ -231,7 +231,7 @@ export default function CreateEventPage() {
   };
 
   const openGalleryModal = (eventIndex, serviceKey, fieldName) => {
-let theme = formik.values.eventDetails?.[eventIndex]?.services?.[serviceKey]?.theme || '';
+    let theme = formik.values.eventDetails?.[eventIndex]?.services?.[serviceKey]?.theme || '';
 
     if (theme === 'mixed') {
       theme = '';

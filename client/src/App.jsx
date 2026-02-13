@@ -9,6 +9,7 @@ import CreateEventPage from './pages/newevent/CreateEventPage';
 import EventsPage from './pages/events/EventsPage';
 import EventViewPage from './pages/events/EventViewPage';
 import CatalogPage from './pages/catalog/CatalogPage';
+import QuotesViewPage from './pages/quotes/QuotesViewPage';
 
 function AppContent() {
   const { snackbar, hideSnackbar } = useSnackbar();
@@ -22,6 +23,7 @@ function AppContent() {
         <Route path="/events/view/:id" element={<EventViewPage />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/newevent" element={<CreateEventPage />} />
+        <Route path="/quotes" element={<QuotesViewPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Snackbar

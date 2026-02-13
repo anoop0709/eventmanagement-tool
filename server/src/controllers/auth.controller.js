@@ -61,9 +61,8 @@ export const register = async (req, res) => {
       // Save refresh token to database
       user.refreshToken = refreshToken;
       await user.save();
-logger.info('User registered', { userId: user._id, email: user.email });
+      logger.info('User registered', { userId: user._id, email: user.email });
 
-      
       // Set cookies
       setTokenCookie(res, accessToken, 'token');
       setTokenCookie(res, refreshToken, 'refreshToken');

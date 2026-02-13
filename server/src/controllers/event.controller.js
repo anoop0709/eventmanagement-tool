@@ -66,29 +66,29 @@ export const createEvent = async (req, res) => {
     if (isSubmitting) {
       try {
         const eventDataForPDF = event.toObject();
-        
+
         // Generate PDF
         logger.info('Generating PDF for event submission...');
         const pdfBuffer = await generateEventPDF(eventDataForPDF);
-        
+
         // Store PDF in database
         event.proposalPdf = {
           data: pdfBuffer,
           generatedAt: new Date(),
         };
         await event.save();
-        
+
         // Send email to customer
         const customerEmail = eventDataForPDF.clientDetails?.email;
         const clientName = eventDataForPDF.clientDetails?.clientName || 'Valued Customer';
-        
+
         if (customerEmail) {
           logger.info(`Sending email to customer: ${customerEmail}`);
           await sendEventDetailsEmail(customerEmail, clientName, eventDataForPDF, pdfBuffer);
-          
+
           // Send notification to admin
           await sendAdminNotificationEmail(eventDataForPDF);
-          
+
           logger.info('Event submission email sent successfully');
         } else {
           logger.warn('Customer email not found, skipping email notification');
@@ -195,29 +195,29 @@ export const updateEvent = async (req, res) => {
     if (isSubmitting) {
       try {
         const eventDataForPDF = updatedEvent.toObject();
-        
+
         // Generate PDF
         logger.info('Generating PDF for event submission...');
         const pdfBuffer = await generateEventPDF(eventDataForPDF);
-        
+
         // Store PDF in database
         updatedEvent.proposalPdf = {
           data: pdfBuffer,
           generatedAt: new Date(),
         };
         await updatedEvent.save();
-        
+
         // Send email to customer
         const customerEmail = eventDataForPDF.clientDetails?.email;
         const clientName = eventDataForPDF.clientDetails?.clientName || 'Valued Customer';
-        
+
         if (customerEmail) {
           logger.info(`Sending email to customer: ${customerEmail}`);
           await sendEventDetailsEmail(customerEmail, clientName, eventDataForPDF, pdfBuffer);
-          
+
           // Send notification to admin
           await sendAdminNotificationEmail(eventDataForPDF);
-          
+
           logger.info('Event submission email sent successfully');
         } else {
           logger.warn('Customer email not found, skipping email notification');
@@ -262,6 +262,52 @@ export const deleteEvent = async (req, res) => {
   }
 };
 
+// @desc    Confirm event
+// @route   PUT /api/events/confirm
+// @access  Private/Admin
+export const confirmEvent = async (req, res) => {
+  try {
+    const { eventId } = req.body;
+
+    if (!eventId) {
+      return res.status(400).json({ message: 'Event ID is required' });
+    }
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    await event.updateOne({ status: 'confirmed' });
+
+    res.json({ message: 'Event confirmed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// @desc    Cancel event
+// @route   PUT /api/events/cancel
+// @access  Private/Admin
+export const cancelEvent = async (req, res) => {
+  try {
+    const { eventId } = req.body;
+
+    if (!eventId) {
+      return res.status(400).json({ message: 'Event ID is required' });
+    }
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    await event.updateOne({ status: 'cancelled' });
+
+    res.json({ message: 'Event cancelled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // @desc    Get upcoming events (calendar view)
 // @route   GET /api/events/calendar/upcoming
 // @access  Private
@@ -280,9 +326,7 @@ export const getUpcomingEvents = async (req, res) => {
     };
 
     // All company users can see all upcoming events
-    const events = await Event.find(query)
-      .populate('user', 'name email')
-      .sort({ eventDate: 1 });
+    const events = await Event.find(query).populate('user', 'name email').sort({ eventDate: 1 });
 
     res.json(events);
   } catch (error) {
@@ -297,6 +341,23 @@ export const getDraftEvents = async (req, res) => {
   try {
     // All company users can see all drafts
     const events = await Event.find({ status: 'draft' })
+      .populate('user', 'name email')
+      .sort({ updatedAt: -1 });
+
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get draft events
+// @route   GET /api/v1/events/drafts
+// @access  Private
+export const getPendingEvents = async (req, res) => {
+  try {
+    logger.info('Fetching pending events for dashboard');
+    // All company users can see all drafts
+    const events = await Event.find({ status: 'pending' })
       .populate('user', 'name email')
       .sort({ updatedAt: -1 });
 
@@ -327,7 +388,10 @@ export const getDashboardStats = async (req, res) => {
       draftEvents,
     ] = await Promise.all([
       Event.countDocuments(),
-      Event.countDocuments({ eventDate: { $gte: today, $lte: twoWeeksFromNow }, status: { $ne: 'cancelled' } }),
+      Event.countDocuments({
+        eventDate: { $gte: today, $lte: twoWeeksFromNow },
+        status: { $ne: 'cancelled' },
+      }),
       Event.countDocuments({ status: 'pending' }),
       Event.countDocuments({ status: 'confirmed' }),
       Event.countDocuments({ status: 'completed' }),
@@ -364,19 +428,19 @@ export const downloadEventPDF = async (req, res) => {
       logger.info('PDF not found in database, generating new one...');
       const eventDataForPDF = event.toObject();
       const pdfBuffer = await generateEventPDF(eventDataForPDF);
-      
+
       // Store for future use
       event.proposalPdf = {
         data: pdfBuffer,
         generatedAt: new Date(),
       };
       await event.save();
-      
+
       // Send the generated PDF
       const eventName = event.events?.[0]?.eventName || 'Event';
       const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal_${timestamp}.pdf`;
-      
+
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       res.setHeader('Content-Length', pdfBuffer.length);
@@ -387,11 +451,11 @@ export const downloadEventPDF = async (req, res) => {
     const eventName = event.events?.[0]?.eventName || 'Event';
     const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const fileName = `${eventName.replace(/[^a-z0-9]/gi, '_')}_Proposal_${timestamp}.pdf`;
-    
+
     console.log('Sending existing PDF with filename:', fileName);
     console.log('Event name:', eventName);
     console.log('Timestamp:', timestamp);
-    
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Length', event.proposalPdf.data.length);

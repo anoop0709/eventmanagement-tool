@@ -6,15 +6,19 @@ import { eventAPI } from '@/services/api';
 import { CalendarView } from '@/components/calendar/CalendarView';
 import { useAuth } from '@/context/AuthContext';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog/ConfirmationDialog';
-import './EventsPage.css';
+import '../events/EventsPage.css';
 
-export default function EventsPage() {
+export default function QuotesViewPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, draft, pending, confirmed, completed, cancelled
   const [viewMode, setViewMode] = useState('list'); // list or calendar
   const [searchQuery, setSearchQuery] = useState('');
-  const [cancelDialog, setCancelDialog] = useState({ isOpen: false, eventId: null, eventName: '' });
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, eventId: null, eventName: '' });
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    eventId: null,
+    eventName: '',
+  });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,7 +30,7 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const response = await eventAPI.getAllEvents();
+      const response = await eventAPI.getPendingEvents();
       // Backend returns events array directly, not wrapped in {events: [...]}
       const eventsArray = Array.isArray(response) ? response : response.events || [];
 
@@ -43,34 +47,51 @@ export default function EventsPage() {
     // Navigate to create event page with edit mode
     navigate(`/newevent?edit=${eventId}`);
   };
-
-  const handleCancelClick = (eventId, eventName) => {
-    setCancelDialog({ isOpen: true, eventId, eventName });
+  const handleConfirmClick = (eventId, eventName) => {
+    setConfirmDialog({ isOpen: true, eventId, eventName });
   };
-
-  const handleCancelConfirm = async () => {
+  const handleConfirm = async () => {
     try {
-      await eventAPI.cancelEvents(cancelDialog.eventId);
-      setCancelDialog({ isOpen: false, eventId: null, eventName: '' });
+      await eventAPI.confirmEvents(confirmDialog.eventId);
+      setConfirmDialog({ isOpen: false, eventId: null, eventName: '' });
       // Refresh the events list
       await fetchEvents();
     } catch (error) {
-      console.error('Error cancelling event:', error);
-      setError('Failed to cancel event. Please try again.');
-      setCancelDialog({ isOpen: false, eventId: null, eventName: '' });
+      console.error('Error confirming event:', error);
+      setError('Failed to confirm event. Please try again.');
+      setConfirmDialog({ isOpen: false, eventId: null, eventName: '' });
+    }
+  };
+  const handleConfirmCancel = () => {
+    setConfirmDialog({ isOpen: false, eventId: null, eventName: '' });
+  };
+  const handleDeleteClick = (eventId, eventName) => {
+    setDeleteDialog({ isOpen: true, eventId, eventName });
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await eventAPI.deleteEvent(deleteDialog.eventId);
+      setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
+      // Refresh the events list
+      await fetchEvents();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      setError('Failed to delete event. Please try again.');
+      setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
     }
   };
 
-  const handleCancelDialog = () => {
-    setCancelDialog({ isOpen: false, eventId: null, eventName: '' });
+  const handleDeleteCancel = () => {
+    setDeleteDialog({ isOpen: false, eventId: null, eventName: '' });
   };
 
-  const canCancelEvent = (event) => {
-    // Draft or pending: any user can cancel
+  const canDeleteEvent = (event) => {
+    // Draft or pending: any user can delete
     if (event.status === 'draft' || event.status === 'pending') {
       return true;
     }
-    // Confirmed: only admins can cancel
+    // Confirmed: only admins can delete
     if (event.status === 'confirmed' && user?.role === 'admin') {
       return true;
     }
@@ -79,22 +100,12 @@ export default function EventsPage() {
 
   const getStatusBadge = (status) => {
     const statusColors = {
-      draft: 'badge-draft',
       pending: 'badge-pending',
-      confirmed: 'badge-confirmed',
-      completed: 'badge-completed',
-      cancelled: 'badge-cancelled',
     };
     return statusColors[status] || 'badge-draft';
   };
 
   const filteredEvents = events.filter((event) => {
-    // Filter by status
-    const statusMatch = filter === 'all' || event.status === filter;
-
-    // Filter by search query
-    if (!searchQuery) return statusMatch;
-
     const query = searchQuery.toLowerCase();
     const firstEvent = event.events?.[0] || {};
     const clientDetails = event.clientDetails || {};
@@ -112,7 +123,7 @@ export default function EventsPage() {
 
     const searchMatch = searchableFields.some((field) => field.includes(query));
 
-    return statusMatch && searchMatch;
+    return searchMatch;
   });
 
   return (
@@ -120,7 +131,7 @@ export default function EventsPage() {
       <AppShell>
         <div className="events-page">
           <div className="events-header">
-            <h1>All Events</h1>
+            <h1>Quotes</h1>
             <div className="header-actions">
               <button
                 className="view-toggle-btn"
@@ -130,9 +141,6 @@ export default function EventsPage() {
                 <span className="toggle-text">
                   {viewMode === 'list' ? 'Calendar View' : 'List View'}
                 </span>
-              </button>
-              <button className="btn-primary" onClick={() => navigate('/newevent')}>
-                Create New Event
               </button>
             </div>
           </div>
@@ -159,36 +167,7 @@ export default function EventsPage() {
 
           {/* Filter Tabs */}
           <div className="events-filters">
-            <button
-              className={`filter-tab ${filter === 'all' ? 'active' : ''}`}
-              onClick={() => setFilter('all')}
-            >
-              All ({events.length})
-            </button>
-            <button
-              className={`filter-tab ${filter === 'draft' ? 'active' : ''}`}
-              onClick={() => setFilter('draft')}
-            >
-              Draft ({events.filter((e) => e.status === 'draft').length})
-            </button>
-            <button
-              className={`filter-tab ${filter === 'pending' ? 'active' : ''}`}
-              onClick={() => setFilter('pending')}
-            >
-              Pending ({events.filter((e) => e.status === 'pending').length})
-            </button>
-            <button
-              className={`filter-tab ${filter === 'confirmed' ? 'active' : ''}`}
-              onClick={() => setFilter('confirmed')}
-            >
-              Confirmed ({events.filter((e) => e.status === 'confirmed').length})
-            </button>
-            <button
-              className={`filter-tab ${filter === 'completed' ? 'active' : ''}`}
-              onClick={() => setFilter('completed')}
-            >
-              Completed ({events.filter((e) => e.status === 'completed').length})
-            </button>
+            <hr />
           </div>
 
           {/* Error Message */}
@@ -260,7 +239,7 @@ export default function EventsPage() {
                       {event.totalBudget && (
                         <div className="event-info">
                           <span className="info-label">Budget:</span>
-                          <span className="info-value">£{event.totalBudget}.00</span>
+                          <span className="info-value">£{event.totalBudget}</span>
                         </div>
                       )}
                     </div>
@@ -275,16 +254,24 @@ export default function EventsPage() {
                       >
                         View
                       </button>
-                      {canCancelEvent(event) && (
+                      {canDeleteEvent(event) && (
                         <button
                           className="btn-delete"
                           onClick={() =>
-                            handleCancelClick(event._id, firstEvent.eventName || 'Untitled Event')
+                            handleDeleteClick(event._id, firstEvent.eventName || 'Untitled Event')
                           }
                         >
-                          Cancel
+                          Delete
                         </button>
                       )}
+                      <button
+                        className="btn-edit"
+                        onClick={() =>
+                          handleConfirmClick(event._id, firstEvent.eventName || 'Untitled Event')
+                        }
+                      >
+                        Confirm
+                      </button>
                     </div>
                   </div>
                 );
@@ -293,14 +280,23 @@ export default function EventsPage() {
           )}
         </div>
 
-        {/* Cancel Confirmation Dialog */}
+        {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
-          isOpen={cancelDialog.isOpen}
-          onClose={handleCancelDialog}
-          onConfirm={handleCancelConfirm}
-          title="Cancel Event"
-          message={`Are you sure you want to cancel "${cancelDialog.eventName}"? This action cannot be undone.`}
-          confirmText="Yes, Cancel Event"
+          isOpen={deleteDialog.isOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Event"
+          message={`Are you sure you want to delete "${deleteDialog.eventName}"? This action cannot be undone.`}
+          confirmText="Yes, Delete"
+          cancelText="Cancel"
+        />
+        <ConfirmationDialog
+          isOpen={confirmDialog.isOpen}
+          onClose={handleConfirmCancel}
+          onConfirm={handleConfirm}
+          title="Confirm Event"
+          message={`Are you sure you want to confirm "${confirmDialog.eventName}"?`}
+          confirmText="Yes, Confirm"
           cancelText="Cancel"
         />
       </AppShell>

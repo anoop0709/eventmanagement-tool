@@ -188,7 +188,17 @@ export const eventAPI = {
   getDraftEvents: async () => {
     return apiRequest('/events/drafts');
   },
-
+  // Get pending events
+  getPendingEvents: async () => {
+    return apiRequest('/events/pending');
+  },
+  // confirm event
+  confirmEvents: async (eventId) => {
+    return apiRequest('/events/confirm', { method: 'PUT', body: JSON.stringify({ eventId }) });
+  },
+  cancelEvents: async (eventId) => {
+    return apiRequest('/events/cancel', { method: 'PUT', body: JSON.stringify({ eventId }) });
+  },
   // Get upcoming events
   getUpcomingEvents: async () => {
     return apiRequest('/events/calendar/upcoming');

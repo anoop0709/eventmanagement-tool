@@ -12,26 +12,28 @@ const __dirname = path.dirname(__filename);
 export const getDecorationCatalog = async (req, res) => {
   try {
     const decorationsPath = path.resolve(__dirname, '../../../client/public/images/decorations');
-    
+
     // Check if directory exists
     if (!fs.existsSync(decorationsPath)) {
       return res.status(404).json({ message: 'Decorations directory not found' });
     }
 
     // Read all folders in decorations directory
-    const folders = fs.readdirSync(decorationsPath, { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
+    const folders = fs
+      .readdirSync(decorationsPath, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name);
 
     // For each folder, get all images
-    const catalog = folders.map(folderName => {
+    const catalog = folders.map((folderName) => {
       const folderPath = path.join(decorationsPath, folderName);
-      const images = fs.readdirSync(folderPath)
-        .filter(file => {
+      const images = fs
+        .readdirSync(folderPath)
+        .filter((file) => {
           const ext = path.extname(file).toLowerCase();
           return ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'].includes(ext);
         })
-        .map(fileName => ({
+        .map((fileName) => ({
           name: fileName,
           url: `/images/decorations/${folderName}/${fileName}`,
         }));
@@ -60,26 +62,29 @@ export const uploadDecorationImage = async (req, res) => {
     }
 
     const category = req.body.category || 'modern';
-    
+
     // Create unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(req.file.originalname);
-    const name = path.basename(req.file.originalname, ext).replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    const name = path
+      .basename(req.file.originalname, ext)
+      .replace(/[^a-z0-9]/gi, '-')
+      .toLowerCase();
     const fileName = `${name}-${uniqueSuffix}${ext}`;
-    
+
     // Define paths
     const decorationsPath = path.resolve(__dirname, '../../../client/public/images/decorations');
     const categoryPath = path.join(decorationsPath, category);
     const filePath = path.join(categoryPath, fileName);
-    
+
     // Create category directory if it doesn't exist
     if (!fs.existsSync(categoryPath)) {
       fs.mkdirSync(categoryPath, { recursive: true });
     }
-    
+
     // Write file from memory to disk
     fs.writeFileSync(filePath, req.file.buffer);
-    
+
     const fileUrl = `/images/decorations/${category}/${fileName}`;
 
     logger.info(`Image uploaded successfully: ${fileUrl}`);
@@ -90,7 +95,7 @@ export const uploadDecorationImage = async (req, res) => {
         name: fileName,
         url: fileUrl,
         category: category,
-      }
+      },
     });
   } catch (error) {
     logger.error('Error uploading decoration image:', error);

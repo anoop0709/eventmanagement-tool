@@ -11,11 +11,7 @@ export const validate = (req, res, next) => {
 
 // Login validation rules
 export const loginValidation = [
-  body('email')
-    .trim()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+  body('email').trim().isEmail().normalizeEmail().withMessage('Please provide a valid email'),
   body('password')
     .trim()
     .notEmpty()
@@ -33,11 +29,7 @@ export const registerValidation = [
     .withMessage('Name is required')
     .isLength({ min: 2, max: 50 })
     .withMessage('Name must be between 2 and 50 characters'),
-  body('email')
-    .trim()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+  body('email').trim().isEmail().normalizeEmail().withMessage('Please provide a valid email'),
   body('password')
     .trim()
     .isLength({ min: 8 })
@@ -67,10 +59,7 @@ export const eventValidation = [
     .trim()
     .matches(/^[0-9]{10}$/)
     .withMessage('Phone number must be 10 digits'),
-  body('events')
-    .optional()
-    .isArray()
-    .withMessage('Events must be an array'),
+  body('events').optional().isArray().withMessage('Events must be an array'),
   body('status')
     .optional()
     .isIn(['draft', 'pending', 'confirmed', 'completed', 'cancelled'])

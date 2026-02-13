@@ -88,7 +88,7 @@ export const sendEventDetailsEmail = async (customerEmail, clientName, eventData
 
     const info = await transporter.sendMail(mailOptions);
     logger.info(`Email sent to ${customerEmail}: ${info.messageId}`);
-    
+
     return {
       success: true,
       messageId: info.messageId,

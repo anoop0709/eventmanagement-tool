@@ -9,6 +9,9 @@ import {
   getDraftEvents,
   getDashboardStats,
   downloadEventPDF,
+  getPendingEvents,
+  confirmEvent,
+  cancelEvent,
 } from '../controllers/event.controller.js';
 import { protect, admin } from '../middleware/auth.js';
 import { apiLimiter } from '../middleware/rateLimiter.js';
@@ -24,7 +27,10 @@ router.route('/').get(protect, getEvents).post(protect, eventValidation, createE
 // Special routes (must be before /:id)
 router.get('/calendar/upcoming', protect, getUpcomingEvents);
 router.get('/drafts', protect, getDraftEvents);
+router.get('/pending', protect, getPendingEvents);
 router.get('/dashboard/stats', protect, admin, getDashboardStats);
+router.put('/confirm', protect, confirmEvent);
+router.put('/cancel', protect, cancelEvent);
 
 // Download PDF route
 router.get('/:id/download-pdf', protect, downloadEventPDF);

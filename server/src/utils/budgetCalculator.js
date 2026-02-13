@@ -4,11 +4,11 @@
 const parseBudgetValue = (budgetString) => {
   if (!budgetString) return 0;
   if (typeof budgetString === 'number') return budgetString;
-  
+
   // Remove currency symbols, commas, and spaces
   const cleanString = String(budgetString).replace(/[₹$,\s]/g, '');
   const number = parseFloat(cleanString);
-  
+
   return isNaN(number) ? 0 : number;
 };
 

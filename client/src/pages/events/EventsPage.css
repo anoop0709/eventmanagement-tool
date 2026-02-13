@@ -16,10 +16,15 @@
 .events-search-container {
   position: relative;
   margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
 }
 
 .events-search {
-  width: 50%;
+  width: 565px;
   padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 1px solid var(--border-gray);
   border-radius: var(--radius-md);
@@ -28,7 +33,6 @@
   background-color: var(--bg-white);
   transition: all var(--transition-base);
 }
-
 
 .events-search:focus {
   outline: none;
@@ -259,7 +263,7 @@
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-min-height: 160px;
+  min-height: 160px;
 }
 
 .event-info {
@@ -280,7 +284,9 @@ min-height: 160px;
   color: var(--text-primary);
   font-weight: 500;
   text-align: right;
-  text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .event-card-footer {
@@ -389,7 +395,7 @@ min-height: 160px;
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
   }
-.events-search {
-  width: 75%;
-}
+  .events-search {
+    width: 75%;
+  }
 }

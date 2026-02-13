@@ -1,5 +1,9 @@
 import express from 'express';
-import { deleteDecorationImage, getDecorationCatalog, uploadDecorationImage } from '../controllers/catalog.controller.js';
+import {
+  deleteDecorationImage,
+  getDecorationCatalog,
+  uploadDecorationImage,
+} from '../controllers/catalog.controller.js';
 import { protect, admin } from '../middleware/auth.js';
 import { uploadDecoration } from '../middleware/upload.js';
 
