@@ -17,7 +17,6 @@ import { eventAPI } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import { useSnackbar } from '@/context/SnackbarContext';
 import './CreateEventPage.css';
-import './UpdateDetailsPage.css';
 
 export default function CreateEventPage() {
   const [step, setStep] = useState(1);
