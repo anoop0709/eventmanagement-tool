@@ -12,33 +12,92 @@ A pure React application for managing events, built with Vite and custom CSS.
 
 ## Project Structure
 
+
 ```
 client/
+├── public/
+│   └── images/
+│       └── decorations/
+│           ├── balloon/
+│           ├── floral/
+│           ├── modern/
+│           └── traditional/
 ├── src/
 │   ├── components/
 │   │   ├── auth/
+│   │   │   ├── AdminRoute.jsx
 │   │   │   └── ProtectedRoute.jsx
+│   │   ├── calendar/
+│   │   │   ├── CalendarView.jsx
+│   │   │   └── CalendarView.css
 │   │   ├── dashboard/
-│   │   │   ├── EventList.jsx + EventList.css
-│   │   │   ├── EventRow.jsx + EventRow.css
-│   │   │   └── StatCard.jsx + StatCard.css
+│   │   │   ├── event-list/
+│   │   │   │   ├── EventList.jsx
+│   │   │   │   └── EventList.css
+│   │   │   ├── event-row/
+│   │   │   │   ├── EventRow.jsx
+│   │   │   │   └── EventRow.css
+│   │   │   └── status-card/
+│   │   │       ├── StatCard.jsx
+│   │   │       └── StatCard.css
 │   │   ├── layout/
-│   │   │   ├── AppShell.jsx + AppShell.css
-│   │   │   ├── SidebarNav.jsx + SidebarNav.css
-│   │   │   └── TopBar.jsx + TopBar.css
+│   │   │   ├── appshell/
+│   │   │   │   ├── AppShell.jsx
+│   │   │   │   └── AppShell.css
+│   │   │   ├── sidebar/
+│   │   │   │   ├── SidebarNav.jsx
+│   │   │   │   └── SidebarNav.css
+│   │   │   └── topbar/
+│   │   │       ├── TopBar.jsx
+│   │   │       └── TopBar.css
 │   │   └── ui/
-│   │       ├── Badge.jsx + Badge.css
-│   │       ├── Button.jsx + Button.css
-│   │       └── Select.jsx + Select.css
+│   │       ├── badge/
+│   │       ├── button/
+│   │       ├── confirmation-dialog/
+│   │       ├── form-card/
+│   │       ├── form-field-renderer/
+│   │       ├── multiple-events/
+│   │       ├── review/
+│   │       │   ├── Review.jsx
+│   │       │   └── Review.css
+│   │       ├── select/
+│   │       │   ├── Select.jsx
+│   │       │   └── Select.css
+│   │       ├── snackbar/
+│   │       └── update-event-details/
+│   ├── config/
+│   │   ├── eventFormConfig.js
+│   │   ├── formStepsConfig.js
+│   │   └── updateDetailsConfig.js
 │   ├── context/
-│   │   └── AuthContext.jsx
+│   │   ├── AuthContext.jsx
+│   │   └── SnackbarContext.jsx
 │   ├── data/
-│   │   ├── mockEvents.js
-│   │   └── eventFormData.js
+│   │   └── mockEvents.js
 │   ├── pages/
-│   │   ├── DashboardPage.jsx + DashboardPage.css
-│   │   ├── LoginPage.jsx + LoginPage.css
-│   │   └── CreateEventPage.jsx + CreateEventPage.css
+│   │   ├── catalog/
+│   │   │   ├── CatalogPage.jsx
+│   │   │   └── CatalogPage.css
+│   │   ├── dashboard/
+│   │   │   ├── DashboardPage.jsx
+│   │   │   └── DashboardPage.css
+│   │   ├── events/
+│   │   │   ├── EventsPage.jsx
+│   │   │   ├── EventsPage.css
+│   │   │   ├── EventViewPage.jsx
+│   │   │   └── EventViewPage.css
+│   │   ├── login/
+│   │   │   ├── LoginPage.jsx
+│   │   │   └── LoginPage.css
+│   │   ├── newevent/
+│   │   │   ├── CreateEventPage.jsx
+│   │   │   └── CreateEventPage.css
+│   │   └── quotes/
+│   │       └── QuotesViewPage.jsx
+│   ├── services/
+│   │   └── api.js
+│   ├── styles/
+│   │   └── variables.css
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── index.css

@@ -93,24 +93,43 @@ npm start
 
 ```
 server/
+├── logs/                  # Log files
+├── scripts/               # Utility scripts (e.g., createAdminUser.js)
 ├── src/
 │   ├── config/
-│   │   └── database.js
+│   │   ├── database.js
+│   │   └── logger.js
 │   ├── controllers/
 │   │   ├── auth.controller.js
+│   │   ├── catalog.controller.js
 │   │   ├── event.controller.js
 │   │   └── user.controller.js
 │   ├── middleware/
 │   │   ├── auth.js
-│   │   └── errorHandler.js
+│   │   ├── errorHandler.js
+│   │   ├── logging.js
+│   │   ├── rateLimiter.js
+│   │   ├── upload.js
+│   │   └── validation.js
 │   ├── models/
-│   │   ├── User.model.js
-│   │   └── Event.model.js
+│   │   ├── Event.model.js
+│   │   └── User.model.js
 │   ├── routes/
 │   │   ├── auth.routes.js
+│   │   ├── catalog.routes.js
 │   │   ├── event.routes.js
 │   │   └── user.routes.js
+│   ├── services/
+│   │   ├── email.service.js
+│   │   └── pdf.service.js
+│   ├── utils/
+│   │   └── budgetCalculator.js
 │   └── index.js
+├── test/
+│   └── test-budget-calculation.js
+├── clear-pdf.js
+├── EMAIL_SETUP.md
+├── email-preview.html
 ├── .env.example
 ├── .gitignore
 ├── package.json
